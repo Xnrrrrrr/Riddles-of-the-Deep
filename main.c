@@ -42,11 +42,11 @@ typedef enum {
 
 // Function to initialize the pirate ship and crew
 void initializeShip(Ship* ship) {
-    ship->distance = 0;
+    ship->distance = 0;                     // tweak intiial resources here steven H
     ship->treasure = 0;
-    ship->food = 100;
-    ship->cannonballs = 20;
-    ship->rum = 30;
+    ship->food = 30;
+    ship->cannonballs = 10;
+    ship->rum = 20;
 
     for (int i = 0; i < 4; i++) {
         snprintf(ship->crew[i].name, sizeof(ship->crew[i].name), "Pirate %d", i + 1);
@@ -67,7 +67,7 @@ void initializeIsland(Island* island, const char* name, const char* description,
 }
 
 void displayShipStatusVisual() {
-    printf(" ..\n");
+    printf(" \n");
     printf("                                      .(  )`-._\n");
     printf("                                    .'  ||     `._\n");
     printf("                                  .'    ||        `.\n");
@@ -103,7 +103,8 @@ void displayShipStatusVisual() {
     printf("   _.-` ``--..  ..  `.-._  `._  `- `-._ .-_. ._.- -._ --.._`` _.-``-.\n");
 
 
-
+// add a way to generate four different pirate asci arts to the right of the ship
+// generate
 
 
 }
@@ -111,32 +112,59 @@ void displayShipStatusVisual() {
 // Function to display the status of the pirate ship
 void displayShipStatus(Ship ship, Weather weather) {
     displayShipStatusVisual();
-    printf("Distance: %d nautical miles\n", ship.distance);
-    printf("Treasure: %d pieces\n", ship.treasure);
-    printf("Food: %d units\n", ship.food);
-    printf("Cannonballs: %d\n", ship.cannonballs);
-    printf("Rum: %d barrels\n", ship.rum);
-
-    printf("Crew Members:\n");
+    printf("    _______________________________________________________\n");
+    printf("    /\\                                                      \\\n");
+    printf("(O)===)><><><><><><><><><><><><><><><><><><><><><><><><><><><)==(O)\n");
+    printf("    \\/''''''''''''''''''''''''''''''''''''''''''''''''''''''/\n");
+    printf("    (                                                      (\n");
+    printf("     )                                                      )\n");
+    printf("    (                                                      (\n");
+    printf("     )                                                      )\n");
+    printf("    (                   Pirate Ship                        (\n");
+    printf("     )                                                      )\n");
+    printf("    (                                                      (\n");
+    printf("    (                                                      (\n");
+    printf("     )                                                      )\n");
+    printf("    (                                                      (\n");
+    printf("     )                                                      )\n");
+    printf("    (                                                      (\n");
+    printf("    (                                                      (\n");
+    printf("    (                                                      (\n");
+    printf("    (                                                      (\n");
+    printf("    (                                                      (\n");
+    printf("    (                                                      (\n");
+    printf("    (                                                      (\n");
+    printf("    (                                                      (\n");
+    printf("    (                                                      (\n");
+    printf("    (                                                      (\n");
+    printf("    (                   Distance: %d nautical miles        (\n", ship.distance);
+    printf("    (                   Treasure: %d pieces                (\n", ship.treasure);
+    printf("    (                   Food: %d units                     (\n", ship.food);
+    printf("    (                   Cannonballs: %d                    (\n", ship.cannonballs);
+    printf("    (                   Rum: %d barrels                    (\n", ship.rum);
+    printf("    (                                                      (\n");
+    printf("    (                   Crew Members:                     (\n");
     for (int i = 0; i < 4; i++) {
-        printf("%s - Health: %d, Morale: %d, Experience: %d\n", ship.crew[i].name, ship.crew[i].health, ship.crew[i].morale, ship.crew[i].experience);
+        printf("    (  %s - Health: %d, Morale: %d, Experience: %d  (\n", ship.crew[i].name, ship.crew[i].health, ship.crew[i].morale, ship.crew[i].experience);
     }
-
-    printf("Weather: ");
+    printf("    (  Weather: ");
     switch (weather) {
         case CLEAR:
-            printf("Clear\n");
+            printf("Clear                                       (\n");
             break;
         case STORM:
-            printf("Stormy\n");
+            printf("Stormy              (\n");
             break;
         case CALM:
-            printf("Calm\n");
+            printf("Calm                (\n");
             break;
     }
-
+    printf("    (                                                      (\n");
+    printf("    \\/______________________________________________________/\n");
     printf("\n");
 }
+
+
 
 // Function to simulate a random event during the pirate journey
 void randomEvent(Ship* ship, Weather* weather, Island* currentIsland) {
@@ -178,7 +206,29 @@ void randomEvent(Ship* ship, Weather* weather, Island* currentIsland) {
             }
             break;
     }
+
+    // penalties for resource shortages     ADD CANNONBALL SHORTAGE
+    if (ship->food == 0) {
+        printf("Your crew is hungry! Morale decreased.\n");
+        for (int i = 0; i < 4; i++) {
+            ship->crew[1].morale -= 10;
+            if (ship->crew[i].morale < 0) {
+                ship->crew[i].morale = 0;
+            }
+        }
+    }
+
+    if (ship->rum == 0) {
+        printf("Your crew is hungry! Morale decreased.\n");
+        for (int i = 0; i < 4; i++) {
+            ship->crew[1].morale -= 10;
+            if (ship->crew[i].morale < 0) {
+                ship->crew[i].morale = 0;
+            }
+        }
+    }
 }
+
 
 // Function to simulate the player's decision during the pirate journey
 void makeDecision(Ship* ship, Island* currentIsland, int currentIslandIndex, Weather* weather) {
@@ -192,11 +242,16 @@ void makeDecision(Ship* ship, Island* currentIsland, int currentIslandIndex, Wea
     scanf("%d", &choice);
     getchar(); // Consume the newline character
 
+    int randomDistance; //declares randomDistance before switchcase
+
     switch (choice) {
         case 1:
-            ship->distance += 50;
-            ship->food -= 10;
-            ship->rum -= 5;
+            randomDistance = rand() % 30 + 12;
+            ship->distance += randomDistance;
+
+            // Adjust food and rum consumption based on the random distance
+            ship->food -= (randomDistance / 10);
+            ship->rum -= (randomDistance / 15);             // same goes here bih its been increased doh
             break;
         case 2:
             for (int i = 0; i < 4; i++) {
@@ -283,7 +338,7 @@ int main() {
     // print game intro
 
     printf("   ______________________________\n");
-    printf(" / \\                             \\.\n");
+    printf(" / \\                             \\\n");
     printf("|   |                            |\n");
     printf(" \\_ |                            |\n");
     printf("    | Welcome to Riddles         |\n");
@@ -298,8 +353,8 @@ int main() {
     printf("    |                            |\n");
     printf("    |                            |\n");
     printf("    |   _________________________|___\n");
-    printf("    |  /                            /.\n");
-    printf("    \\_/____________________________/. \n");
+    printf("    |  /                            /\n");
+    printf("    \\_/____________________________/ \n");
 
     // init weather and island index
 
@@ -338,3 +393,20 @@ int main() {
 
     return 0;
 }
+
+
+// needs input validation
+//needs border system and nicer terminal - add an input box where players input goes
+// needs to tweak the nautical mile system from 50 each time
+// increase amount of islands
+// adjust resource scarcity and make it more diffuclt
+// increase crew challenges and random encounter diffucutly
+// tweak treasures - different kinds
+// add a time / day limit to the game
+// possibly add a day and night aspect to the game- sharks
+// crew could have scpeialziations for example -  a cook a fighter a navigator
+// event impact severity
+// modify trading options to make less favorable - cost of trading etc
+// increase consumption of resources during sailing and resting
+// ADD A DIFFUCULTY SELECTOR AT START OF GAME - changes starting resources diffuculty ofd everything etc
+// ship should only display when the first choice sail to next island is chosen

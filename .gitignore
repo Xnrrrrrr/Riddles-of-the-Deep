@@ -7,6 +7,18 @@
 /dataSources/
 /dataSources.local.xml
 
+# Ignore compiled files
+*.exe
+*.out
+*.o
+
+# Ignore build directories
+bin/
+build/
+
+# Other
+.idea
+
 
 
 

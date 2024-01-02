@@ -16,6 +16,13 @@ typedef struct {
     int leadership;     // leadership skill how well a crew member leads others
 } Attributes;
 
+// define an enum for diffuculty selection
+typedef enum {
+    EASY,
+    NORMAL,
+    HARD
+} Difficulty;
+
 // Define a structure for a pirate crew member
 typedef struct {
     char name[MAX_STRING_LENGTH];
@@ -54,149 +61,54 @@ typedef enum {
     CALM
 } Weather;
 
-void initializePirate(Pirate* pirate) {
-    // Other initialization code
 
-    pirate->attributes.thievery = 4;   // Default value, adjust as needed
-    pirate->attributes.charisma = 4;
-    pirate->attributes.seamanship = 4;
-    pirate->attributes.medicine = 4;
-    pirate->attributes.instinct = 4;
-    pirate->attributes.leadership = 4;
+
+// Function to initialize attributes based on difficulty
+void initializePirateAttributes(Attributes *attributes, Difficulty difficulty) {
+    switch (difficulty) {
+        case EASY:
+            attributes->thievery = 15;
+            attributes->charisma = 20;
+            attributes->seamanship = 25;
+            attributes->medicine = 10;
+            attributes->instinct = 20;
+            attributes->leadership = 15;
+            break;
+        case NORMAL:
+            attributes->thievery = 10;
+            attributes->charisma = 15;
+            attributes->seamanship = 20;
+            attributes->medicine = 10;
+            attributes->instinct = 15;
+            attributes->leadership = 10;
+            break;
+        case HARD:
+            attributes->thievery = 5;
+            attributes->charisma = 10;
+            attributes->seamanship = 15;
+            attributes->medicine = 5;
+            attributes->instinct = 10;
+            attributes->leadership = 5;
+            break;
+        default:
+            // Default to normal difficulty if an invalid choice is made
+            attributes->thievery = 10;
+            attributes->charisma = 15;
+            attributes->seamanship = 20;
+            attributes->medicine = 10;
+            attributes->instinct = 15;
+            attributes->leadership = 10;
+    }
 }
 
-
-// Function to get attributes from the player
-// Function to get attributes from the player for a given pirate
-void getPlayerAttributes(Pirate* pirate, int pirateNumber) {
-    int max_attribute_points_per_pirate = 13;
-    int current_available_points_per_pirate = 13;
-
-    printf("\nAllocate attribute points for Pirate %d:\n", pirateNumber);
-    sleep(1);
-    printf("You have %d attribute points. \n", current_available_points_per_pirate);
-
-    while (1) {
-        printf("Thievery (0-10): ");
-        if (scanf(" %d", &pirate->attributes.thievery) != 1) {
-            printf("Invalid input. Please enter an integer. \n\n");
-
-            // Clear the input buffer
-            while (getchar() != '\n');
-        } else if (pirate->attributes.thievery < 0 || pirate->attributes.thievery > 10) {
-            printf("Invalid input. Please enter a number between 0 and 10. \n\n");
-        } else if (pirate->attributes.thievery > current_available_points_per_pirate) {
-            printf("You don't have enough attribute points to allocate. ");
-            printf("Currently, you only have %d points. \n\n", current_available_points_per_pirate);
-        } else {
-            current_available_points_per_pirate -= pirate->attributes.thievery;
-            break;
-        }
-    }
-
-    printf("You have %d points remaining. \n", current_available_points_per_pirate);
-
-    while (1) {
-        printf("Charisma (0-10): ");
-        if (scanf(" %d", &pirate->attributes.charisma) != 1) {
-            printf("Invalid input. Please enter an integer. \n\n");
-
-            // Clear the input buffer
-            while (getchar() != '\n');
-        } else if (pirate->attributes.charisma < 0 || pirate->attributes.charisma > 10) {
-            printf("Invalid input. Please enter a number between 0 and 10. \n\n");
-        } else if (pirate->attributes.charisma > current_available_points_per_pirate) {
-            printf("You don't have enough attribute points to allocate.");
-            printf("Currently, you only have %d points. \n\n", current_available_points_per_pirate);
-        } else {
-            current_available_points_per_pirate -= pirate->attributes.charisma;
-            break;
-        }
-    }
-
-    printf("You have %d points remaining. \n", current_available_points_per_pirate);
-
-    while (1) {
-        printf("Seamanship (0-10): ");
-        if (scanf(" %d", &pirate->attributes.seamanship) != 1) {
-            printf("Invalid input. Please enter an integer. \n\n");
-
-            // Clear the input buffer
-            while (getchar() != '\n');
-        } else if (pirate->attributes.seamanship < 0 || pirate->attributes.seamanship > 10) {
-            printf("Invalid input. Please enter a number between 0 and 10. \n\n");
-        } else if (pirate->attributes.seamanship > current_available_points_per_pirate) {
-            printf("You don't have enough attribute points to allocate.");
-            printf("Currently, you only have %d points. \n\n", current_available_points_per_pirate);
-        } else {
-            current_available_points_per_pirate -= pirate->attributes.seamanship;
-            break;
-        }
-    }
-
-    printf("You have %d points remaining. \n", current_available_points_per_pirate);
-
-    while (1) {
-        printf("Medicine (0-10): ");
-        if (scanf(" %d", &pirate->attributes.medicine) != 1) {
-            printf("Invalid input. Please enter an integer. \n\n");
-
-            // Clear the input buffer
-            while (getchar() != '\n');
-        } else if (pirate->attributes.medicine < 0 || pirate->attributes.medicine > 10) {
-            printf("Invalid input. Please enter a number between 0 and 10. \n\n");
-        } else if (pirate->attributes.medicine > current_available_points_per_pirate) {
-            printf("You don't have enough attribute points to allocate.");
-            printf("Currently, you only have %d points. \n\n", current_available_points_per_pirate);
-        } else {
-            current_available_points_per_pirate -= pirate->attributes.medicine;
-            break;
-        }
-    }
-
-    printf("You have %d points remaining. \n", current_available_points_per_pirate);
-
-    while (1) {
-        printf("Instinct (0-10): ");
-        if (scanf(" %d", &pirate->attributes.instinct) != 1) {
-            printf("Invalid input. Please enter an integer. \n\n");
-
-            // Clear the input buffer
-            while (getchar() != '\n');
-        } else if (pirate->attributes.instinct < 0 || pirate->attributes.instinct > 10) {
-            printf("Invalid input. Please enter a number between 0 and 10. \n\n");
-        } else if (pirate->attributes.instinct > current_available_points_per_pirate) {
-            printf("You don't have enough attribute points to allocate.");
-            printf("Currently, you only have %d points. \n\n", current_available_points_per_pirate);
-        } else {
-            current_available_points_per_pirate -= pirate->attributes.instinct;
-            break;
-        }
-    }
-
-    printf("You have %d points remaining. \n", current_available_points_per_pirate);
-
-    while (1) {
-        printf("Leadership (0-10): ");
-        if (scanf(" %d", &pirate->attributes.leadership) != 1) {
-            printf("Invalid input. Please enter an integer. \n\n");
-
-            // Clear the input buffer
-            while (getchar() != '\n');
-        } else if (pirate->attributes.leadership < 0 || pirate->attributes.leadership > 10) {
-            printf("Invalid input. Please enter a number between 0 and 10. \n\n");
-        } else if (pirate->attributes.leadership > current_available_points_per_pirate) {
-            printf("You don't have enough attribute points to allocate.");
-            printf("Currently, you only have %d points. \n\n", current_available_points_per_pirate);
-        } else {
-            current_available_points_per_pirate -= pirate->attributes.leadership;
-            break;
-        }
-    }
-
-    current_available_points_per_pirate = 13;
+// Function to initialize pirate crew member
+void initializePirate(Pirate *pirate, Difficulty difficulty) {
+    // Implement pirate initialization logic here
+    pirate->health = 100;
+    pirate->morale = 100; // Start with full morale
+    pirate->experience = 0;
+    initializePirateAttributes(&pirate->attributes, difficulty);
 }
-
 
 
 // Function to initialize the pirate ship and crew
@@ -222,6 +134,8 @@ void clearScreen() {
     system("cls"); // For windows
     // system("clear"); // For linux/unix
 }
+
+
 
 // Function to initialize an island
 void initializeIsland(Island* island, const char* name, const char* description, int treasure, int food, int cannonballs, int rum) {
@@ -603,7 +517,7 @@ int isGameOver(Ship ship) {
 }
 
 int main() {
-    srand((unsigned int)time(NULL));
+    srand((unsigned int)time(NULL));        // creating random seed each time program is ran
 
     // intiliaze pirate ships and islands
 
@@ -647,16 +561,28 @@ int main() {
     printf("    |  /                            /\n");
     printf("    \\_/____________________________/ \n");
 
-    getPlayerAttributes(&pirateShip.crew[0], 0);
+    Difficulty difficulty;
 
     Pirate pirates[4];
-    for (int i = 0; i < 4; i++) {
-        snprintf(pirates[i].name, sizeof(pirates[i].name), "Pirate %d", i + 1);
-        getPlayerAttributes(&pirates[i], i + 1);
-        pirates[i].health = 100;
-        pirates[i].morale = 100;
-        pirates[i].experience = 0;
+
+    printf("Enter difficulty level (1: EASY, 2: NORMAL, 3: HARD): ");
+    int difficultyChoice;
+    scanf("%d", &difficultyChoice);
+
+    switch (difficultyChoice) {
+        case 1:
+            difficulty = EASY;
+            break;
+        case 2:
+            difficulty = NORMAL;
+            break;
+        case 3:
+            difficulty = HARD;
+            break;
+        default:
+            difficulty = NORMAL; // Default to normal difficulty if an invalid choice is made
     }
+
 
 
 

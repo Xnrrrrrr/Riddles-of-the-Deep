@@ -57,6 +57,7 @@ void initializeShip(Ship* ship) {
 }
 
 // Function to clear the terminal screen
+
 void clearScreen() {
     system("cls"); // For windows
     // system("clear"); // For linux/unix
@@ -275,7 +276,7 @@ void makeDecision(Ship* ship, Island* currentIsland, int currentIslandIndex, Wea
 
 
             break;
-        case 2:
+        case 2:                                             // handles the rest for the day for the crew option 2
             for (int i = 0; i < 4; i++) {
                 ship->crew[i].health += 10;
                 if (ship->crew[i].health > 100) {
@@ -286,7 +287,7 @@ void makeDecision(Ship* ship, Island* currentIsland, int currentIslandIndex, Wea
             ship->rum -= 2;
             break;
         case 3:
-            printf("You found %d pieces of treasure on %s!\n", currentIsland->treasureAvailable, currentIsland->name);
+            printf("You found %d pieces of treasure on %s!\n", currentIsland->treasureAvailable, currentIsland->name);      // needs more options for not finding treasure
             ship->treasure += currentIsland->treasureAvailable;
             currentIsland->treasureAvailable = 0;
             break;
@@ -294,30 +295,80 @@ void makeDecision(Ship* ship, Island* currentIsland, int currentIslandIndex, Wea
             printf("Trading with the locals on %s...\n", currentIsland->name);
 
             // Simulate a conversation with locals
-            printf("Locals: Welcome, pirate! What would you like to trade?\n");
-            printf("1. Food and rum (Cost: 10 treasure)\n");
-            printf("2. Cannonballs and rum (Cost: 15 treasure)\n");
+            printf("Locals: Ahoy there, pirate! What brings ye to our humble island?\n");
+            printf("1. Ask about the local rumors.\n");
+            printf("2. Inquire about the available goods for trade.\n");
+            printf("3. Attempt to negotiate the prices.\n");
+            printf("4. Leave without making a trade.\n");
 
-            int tradeChoice;
-            scanf("%d", &tradeChoice);
+            int conversationChoice;
+            scanf("%d", &conversationChoice);
 
-            switch (tradeChoice) {
+            switch (conversationChoice) {
                 case 1:
-                    printf("Locals: You've chosen food and rum. Do you feel you deserve food and rum from us? Here you go!\n");
-                    ship->food += 30;
-                    ship->rum += 20;
-                    ship->treasure -= 10;
+                    printf("Locals: Rumor has it there be a hidden treasure chest on the nearby isle. Beware of the curses!\n");
                     break;
                 case 2:
-                    printf("Locals: You've chosen cannonballs and rum. Here you go!\n");
-                    ship->cannonballs += 20;
-                    ship->rum += 30;
-                    ship->treasure -= 15;
+                    printf("Locals: We've got some fine goods for trade. Take a look:\n");
+                    printf("   a. Food and rum (Cost: 10 treasure)\n");
+                    printf("   b. Cannonballs and rum (Cost: 15 treasure)\n");
+
+                    char tradeOption;
+                    scanf(" %c", &tradeOption);
+
+                    switch (tradeOption) {
+                        case 'a':
+                            printf("Locals: A wise choice! Here's some food and rum for ye.\n");
+                            ship->food += 30;
+                            ship->rum += 20;
+                            ship->treasure -= 10;
+                            break;
+                        case 'b':
+                            printf("Locals: Ready for battle, eh? Here's some cannonballs and rum for ye.\n");
+                            ship->cannonballs += 20;
+                            ship->rum += 30;
+                            ship->treasure -= 15;
+                            break;
+                        default:
+                            printf("Locals: Ye be playin' tricks on us! No trade was made.\n");
+                    }
+                    break;
+                case 3:
+                    printf("Locals: A shrewd negotiator, are ye? Let's see what we can arrange.\n");
+
+                    // Implement your negotiation logic here
+                    printf("1. Offer a lower price for the goods.\n");
+                    printf("2. Compliment the locals to get a better deal.\n");
+                    printf("3. Threaten to find another trader if the price isn't reduced.\n");
+
+                    int negotiationChoice;
+                    scanf("%d", &negotiationChoice);
+
+                    switch (negotiationChoice) {
+                        case 1:
+                            printf("Locals: Aye, we can lower the price a bit for ye.\n");
+                            // Implement logic to adjust trade based on the user's choice
+                            break;
+                        case 2:
+                            printf("Locals: Flattery will get ye everywhere! Enjoy a special discount.\n");
+                            // Implement logic to adjust trade based on the user's choice
+                            break;
+                        case 3:
+                            printf("Locals: No need for threats, pirate. We'll make a fair deal.\n");
+                            // Implement logic to adjust trade based on the user's choice
+                            break;
+                        default:
+                            printf("Locals: Ye be speakin' gibberish! No trade was made.\n");
+                    }
+                    break;
+                case 4:
+                    printf("Locals: Farewell, pirate. May the winds be at yer back.\n");
                     break;
                 default:
-                    printf("Locals: Sorry, we didn't understand your choice. No trade was made.\n");
+                    printf("Locals: Ye be speakin' gibberish! No trade was made.\n");
             }
             break;
+
 
         default:
             printf("Invalid choice. Continue sailing to the next island.\n");
@@ -452,6 +503,14 @@ int main() {
 // add bandits who steal the treasure and other resources
 // option to gather materials to upgrade pirate ship or buy new pirate ship
 // option to name pirate ship
+// options to name pirates
 // fix negative when you trade with locals
 // fix weird traveling paranthesis on scroll in clear
 // add bartering system
+// add charisma and charisma levels
+// possible start attributes that user can select an put points intoi
+// dialogue options need to change per island
+// possible combat system
+// needs scenes and terminal manipulation
+// players reputation among locals]
+// add variable outcome to dialogue options

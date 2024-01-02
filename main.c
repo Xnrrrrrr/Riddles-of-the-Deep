@@ -33,6 +33,7 @@ typedef struct {
     int food;
     int cannonballs;
     int rum;
+    int health;
     Pirate crew[4];
 } Ship;
 
@@ -205,6 +206,7 @@ void initializeShip(Ship* ship) {
     ship->food = 30;
     ship->cannonballs = 10;
     ship->rum = 20;
+    ship->health = 100;
 
     for (int i = 0; i < 4; i++) {
         snprintf(ship->crew[i].name, sizeof(ship->crew[i].name), "Pirate %d", i + 1);
@@ -301,7 +303,7 @@ void displayShipStatus(Ship ship, Weather weather) {
     printf("    (                                                      (\n");
     printf("    (                                                      (\n");
     printf("    (                                                      (\n");
-    printf("    (                                                      (\n");
+    printf("    (                   Ship Health: %d                     (\n", ship.health);
     printf("    (                   Distance: %d nautical miles        (\n", ship.distance);
     printf("    (                   Treasure: %d pieces                (\n", ship.treasure);
     printf("    (                   Food: %d units                     (\n", ship.food);
@@ -608,10 +610,21 @@ int main() {
     Ship pirateShip;
     initializeShip(&pirateShip);
 
-    Island islands[3];
+    Island islands[13];
     initializeIsland(&islands[0], "Tortuga", "A notorious pirate haven", 0, 0, 0, 0);
     initializeIsland(&islands[1], "Isla de Muerta", "Rumored to have cursed treasure", 50, 20, 10, 15);
     initializeIsland(&islands[2], "Treasure Island", "The final destination for legendary riches", 100, 30, 20, 30);
+    initializeIsland(&islands[3], "Blackbeard's Retreat", "Hideout of the infamous Blackbeard", 80, 40, 15, 20);
+    initializeIsland(&islands[4], "Crimson Cove", "Known for its vibrant red coral reefs", 60, 25, 12, 18);
+    initializeIsland(&islands[5], "Emerald Isle", "Rumored to have mystical emerald artifacts", 90, 35, 25, 22);
+    initializeIsland(&islands[6], "Gold Rush Atoll", "Once the site of a legendary gold rush", 120, 50, 30, 35);
+    initializeIsland(&islands[7], "Siren's Call", "Beware the enchanting songs of the sirens", 70, 30, 18, 20);
+    initializeIsland(&islands[8], "Moonlit Bay", "Shrouded in mystery under the moonlight", 110, 45, 28, 30);
+    initializeIsland(&islands[9], "Thunder Isle", "Frequently struck by thunderstorms", 85, 38, 20, 25);
+    initializeIsland(&islands[10], "Jade Harbor", "Home to a hidden harbor of valuable jade", 95, 42, 22, 28);
+    initializeIsland(&islands[11], "Whispering Sands", "Desert island with secrets carried by the wind", 75, 35, 15, 20);
+    initializeIsland(&islands[12], "Mystic Key Atoll", "Guardian of an ancient pirate treasure", 130, 55, 35, 40);
+
 
     // print game intro
 

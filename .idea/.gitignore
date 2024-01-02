@@ -1,0 +1,43 @@
+# Default ignored files
+/shelf/
+/workspace.xml
+# Editor-based HTTP Client requests
+/httpRequests/
+# Datasource local storage ignored files
+/dataSources/
+/dataSources.local.xml
+
+
+
+
+// needs input validation
+//needs border system and nicer terminal - add an input box where players input goes
+// needs to tweak the nautical mile system from 50 each time
+// increase amount of islands
+// adjust resource scarcity and make it more diffuclt
+// increase crew challenges and random encounter diffucutly
+// tweak treasures - different kinds
+// add a time / day limit to the game
+// possibly add a day and night aspect to the game- sharks
+// crew could have specialziations for example -  a cook a fighter a navigator
+// event impact severity
+// modify trading options to make less favorable - cost of trading etc
+// increase consumption of resources during sailing and resting
+// ADD A DIFFUCULTY SELECTOR AT START OF GAME - changes starting resources diffuculty ofd everything etc
+// ship should only display when the first choice sail to next island is chosen
+// add more detailed conversations and different cases for each island as traders get more aggresive
+// add bandits who steal the treasure and other resources
+// option to gather materials to upgrade pirate ship or buy new pirate ship
+// option to name pirate ship
+// options to name pirates
+// fix negative when you trade with locals
+// fix weird traveling paranthesis on scroll in clear
+// add bartering system
+// add charisma and charisma levels
+// possible start attributes that user can select an put points intoi
+// dialogue options need to change per island
+// possible combat system
+// needs scenes and terminal manipulation
+// players reputation among locals]
+// add variable outcome to dialogue options
+// add group members dying game continuing

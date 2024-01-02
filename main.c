@@ -314,25 +314,39 @@ void makeDecision(Ship* ship, Island* currentIsland, int currentIslandIndex, Wea
                     printf("   b. Cannonballs and rum (Cost: 15 treasure)\n");
 
                     char tradeOption;
-                    scanf(" %c", &tradeOption);
+                    if (scanf(" %c", &tradeOption) != 1) {
+                        // Invalid input, handle accordingly
+                        printf("Invalid choice. No trade was made.\n");
+                        break;
+                    }
 
                     switch (tradeOption) {
                         case 'a':
-                            printf("Locals: A wise choice! Here's some food and rum for ye.\n");
-                            ship->food += 30;
-                            ship->rum += 20;
-                            ship->treasure -= 10;
+                            if (ship->treasure >= 10) {
+                                printf("Locals: A wise choice! Here's some food and rum for ye.\n");
+                                ship->food += 30;
+                                ship->rum += 20;
+                                ship->treasure -= 10;
+                            } else {
+                                printf("Locals: Ye don't have enough treasure for this trade!\n");
+                            }
                             break;
                         case 'b':
-                            printf("Locals: Ready for battle, eh? Here's some cannonballs and rum for ye.\n");
-                            ship->cannonballs += 20;
-                            ship->rum += 30;
-                            ship->treasure -= 15;
+                            if (ship->treasure >= 15) {
+                                printf("Locals: Ready for battle, eh? Here's some cannonballs and rum for ye.\n");
+                                ship->cannonballs += 20;
+                                ship->rum += 30;
+                                ship->treasure -= 15;
+                            } else {
+                                printf("Locals: Ye don't have enough treasure for this trade!\n");
+                            }
                             break;
                         default:
-                            printf("Locals: Ye be playin' tricks on us! No trade was made.\n");
+                            // Invalid input, handle accordingly
+                            printf("Invalid choice. No trade was made.\n");
                     }
                     break;
+
                 case 3:
                     printf("Locals: A shrewd negotiator, are ye? Let's see what we can arrange.\n");
 
@@ -482,35 +496,3 @@ int main() {
 
     return 0;
 }
-
-
-// needs input validation
-//needs border system and nicer terminal - add an input box where players input goes
-// needs to tweak the nautical mile system from 50 each time
-// increase amount of islands
-// adjust resource scarcity and make it more diffuclt
-// increase crew challenges and random encounter diffucutly
-// tweak treasures - different kinds
-// add a time / day limit to the game
-// possibly add a day and night aspect to the game- sharks
-// crew could have specialziations for example -  a cook a fighter a navigator
-// event impact severity
-// modify trading options to make less favorable - cost of trading etc
-// increase consumption of resources during sailing and resting
-// ADD A DIFFUCULTY SELECTOR AT START OF GAME - changes starting resources diffuculty ofd everything etc
-// ship should only display when the first choice sail to next island is chosen
-// add more detailed conversations and different cases for each island as traders get more aggresive
-// add bandits who steal the treasure and other resources
-// option to gather materials to upgrade pirate ship or buy new pirate ship
-// option to name pirate ship
-// options to name pirates
-// fix negative when you trade with locals
-// fix weird traveling paranthesis on scroll in clear
-// add bartering system
-// add charisma and charisma levels
-// possible start attributes that user can select an put points intoi
-// dialogue options need to change per island
-// possible combat system
-// needs scenes and terminal manipulation
-// players reputation among locals]
-// add variable outcome to dialogue options

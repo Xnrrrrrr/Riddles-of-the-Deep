@@ -212,6 +212,25 @@ void randomEvent(Ship* ship, Weather* weather, Island* currentIsland) {
                 }
             }
             break;
+        case 5:
+            printf("A giant sea monster surfaces near your ship. Your crew is shaking in their boots!");
+            for (int i = 0; i < 4; i++) {
+                ship->crew[i].morale -= 35;
+                if (ship->crew[i].morale > 100) {
+                    ship->crew[i].morale = 100;
+                }
+            }
+            break;
+        case 6:
+            printf("The water is choppy and waves are beginning to surround the ship ");
+            for (int i = 0; i < 4; i++) {           // iterates through each members of the crew
+                ship->crew[i].morale -= 10;         // increases or decreases the morale of each crew member by 20
+                if (ship->crew[i].morale > 100) {   // after in or de of the morale, checks if it exceeds 0 or 100
+                    ship->crew[i].morale = 100;     // ensures morale doesnt go to 0
+                }
+            }
+            break;
+
     }
 
     // penalties for resource shortages     ADD CANNONBALL SHORTAGE
@@ -226,7 +245,7 @@ void randomEvent(Ship* ship, Weather* weather, Island* currentIsland) {
     }
 
     if (ship->rum == 0) {
-        printf("Your crew is hungry! Morale decreased.\n");
+        printf("Your crew is thirsty! Morale decreased.\n");
         for (int i = 0; i < 4; i++) {
             ship->crew[1].morale -= 10;
             if (ship->crew[i].morale < 0) {

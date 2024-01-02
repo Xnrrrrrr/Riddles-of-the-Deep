@@ -5,13 +5,25 @@
 // Define constants for maximum string length
 #define MAX_STRING_LENGTH 100
 
+// define a structure for attributes
+typedef struct {
+    int thievery;       // thievery skill
+    int charisma;       // charisma skill
+    int seamanship;     // sailing related skill, navigating storms/obstacles
+    int medicine;       // health recovery skill
+    int instinct;       // survival instinct skill
+    int leadership;     // leadership skill how well a crew member leads others
+} Attributes;
+
 // Define a structure for a pirate crew member
 typedef struct {
     char name[MAX_STRING_LENGTH];
     int health;
     int morale;
     int experience;
+    Attributes attributes;
 } Pirate;
+
 
 // Define a structure for the pirate ship
 typedef struct {
@@ -39,6 +51,66 @@ typedef enum {
     STORM,
     CALM
 } Weather;
+
+void initializePirate(Pirate* pirate) {
+    // Other initialization code
+
+    pirate->attributes.thievery = 4;   // Default value, adjust as needed
+    pirate->attributes.charisma = 4;
+    pirate->attributes.seamanship = 4;
+    pirate->attributes.medicine = 4;
+    pirate->attributes.instinct = 4;
+    pirate->attributes.leadership = 4;
+}
+
+
+// Function to get attributes from the player
+// Function to get attributes from the player for a given pirate
+void getPlayerAttributes(Pirate* pirate, int pirateNumber) {
+    printf("\nAllocate attribute points for Pirate %d:\n", pirateNumber);
+    printf("Thievery (0-10): ");
+    scanf("%d", &pirate->attributes.thievery);
+
+    printf("Charisma (0-10): ");
+    scanf("%d", &pirate->attributes.charisma);
+
+    printf("Seamanship (0-10): ");
+    scanf("%d", &pirate->attributes.seamanship);
+
+    printf("Medicine (0-10): ");
+    scanf("%d", &pirate->attributes.medicine);
+
+    printf("Instinct (0-10): ");
+    scanf("%d", &pirate->attributes.instinct);
+
+    printf("Leadership (0-10): ");
+    scanf("%d", &pirate->attributes.leadership);
+
+    // Input validation
+    while (pirate->attributes.thievery + pirate->attributes.charisma + pirate->attributes.seamanship +
+           pirate->attributes.medicine + pirate->attributes.instinct + pirate->attributes.leadership > 13) {
+        printf("Total points cannot exceed 13. Reallocate attribute points for Pirate %d:\n", pirateNumber);
+        printf("Thievery (0-10): ");
+        scanf("%d", &pirate->attributes.thievery);
+
+        printf("Charisma (0-10): ");
+        scanf("%d", &pirate->attributes.charisma);
+
+        printf("Seamanship (0-10): ");
+        scanf("%d", &pirate->attributes.seamanship);
+
+        printf("Medicine (0-10): ");
+        scanf("%d", &pirate->attributes.medicine);
+
+        printf("Instinct (0-10): ");
+        scanf("%d", &pirate->attributes.instinct);
+
+        printf("Leadership (0-10): ");
+        scanf("%d", &pirate->attributes.leadership);
+    }
+}
+
+
 
 // Function to initialize the pirate ship and crew
 void initializeShip(Ship* ship) {
@@ -475,6 +547,17 @@ int main() {
     printf("    |   _________________________|___\n");
     printf("    |  /                            /\n");
     printf("    \\_/____________________________/ \n");
+
+    getPlayerAttributes(&pirateShip.crew[0], 0);
+
+    Pirate pirates[4];
+    for (int i = 0; i < 4; i++) {
+        snprintf(pirates[i].name, sizeof(pirates[i].name), "Pirate %d", i + 1);
+        getPlayerAttributes(&pirates[i], i + 1);
+        pirates[i].health = 100;
+        pirates[i].morale = 100;
+        pirates[i].experience = 0;
+    }
 
 
 

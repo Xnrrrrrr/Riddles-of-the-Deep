@@ -56,6 +56,12 @@ void initializeShip(Ship* ship) {
     }
 }
 
+// Function to clear the terminal screen
+void clearScreen() {
+    system("cls"); // For windows
+    // system("clear"); // For linux/unix
+}
+
 // Function to initialize an island
 void initializeIsland(Island* island, const char* name, const char* description, int treasure, int food, int cannonballs, int rum) {
     snprintf(island->name, sizeof(island->name), "%s", name);
@@ -252,6 +258,22 @@ void makeDecision(Ship* ship, Island* currentIsland, int currentIslandIndex, Wea
             // Adjust food and rum consumption based on the random distance
             ship->food -= (randomDistance / 10);
             ship->rum -= (randomDistance / 15);             // same goes here bih its been increased doh
+
+            // Display different dialogues based on the distance traveled
+            if (randomDistance >= 12 && randomDistance <= 14) {
+                printf("You set sail for the next island, and the sea is calm and peaceful.\n");
+            } else if (randomDistance >= 15 && randomDistance <= 17) {
+                printf("You encounter some rough waves, but your skilled crew navigates through them.\n");
+            } else if (randomDistance >= 18 && randomDistance <= 20) {
+                printf("Dark clouds gather in the sky, and the crew braces for an approaching storm.\n");
+            } else {
+                // Add more cases for different distances and events
+                printf("Your journey continues...\n");
+            }
+
+
+
+
             break;
         case 2:
             for (int i = 0; i < 4; i++) {
@@ -270,19 +292,33 @@ void makeDecision(Ship* ship, Island* currentIsland, int currentIslandIndex, Wea
             break;
         case 4:
             printf("Trading with the locals on %s...\n", currentIsland->name);
-            int tradeOption = rand() % 2; // 0 or 1
-            if (tradeOption == 0) {
-                printf("The locals offer food and rum in exchange for some treasure!\n");
-                ship->food += 30;
-                ship->rum += 20;
-                ship->treasure -= 10;
-            } else {
-                printf("The locals offer cannonballs and rum in exchange for some treasure!\n");
-                ship->cannonballs += 20;
-                ship->rum += 30;
-                ship->treasure -= 15;
+
+            // Simulate a conversation with locals
+            printf("Locals: Welcome, pirate! What would you like to trade?\n");
+            printf("1. Food and rum (Cost: 10 treasure)\n");
+            printf("2. Cannonballs and rum (Cost: 15 treasure)\n");
+
+            int tradeChoice;
+            scanf("%d", &tradeChoice);
+
+            switch (tradeChoice) {
+                case 1:
+                    printf("Locals: You've chosen food and rum. Do you feel you deserve food and rum from us? Here you go!\n");
+                    ship->food += 30;
+                    ship->rum += 20;
+                    ship->treasure -= 10;
+                    break;
+                case 2:
+                    printf("Locals: You've chosen cannonballs and rum. Here you go!\n");
+                    ship->cannonballs += 20;
+                    ship->rum += 30;
+                    ship->treasure -= 15;
+                    break;
+                default:
+                    printf("Locals: Sorry, we didn't understand your choice. No trade was made.\n");
             }
             break;
+
         default:
             printf("Invalid choice. Continue sailing to the next island.\n");
             ship->distance += 50;
@@ -356,6 +392,8 @@ int main() {
     printf("    |  /                            /\n");
     printf("    \\_/____________________________/ \n");
 
+
+
     // init weather and island index
 
     Weather weather = CLEAR;
@@ -404,9 +442,16 @@ int main() {
 // tweak treasures - different kinds
 // add a time / day limit to the game
 // possibly add a day and night aspect to the game- sharks
-// crew could have scpeialziations for example -  a cook a fighter a navigator
+// crew could have specialziations for example -  a cook a fighter a navigator
 // event impact severity
 // modify trading options to make less favorable - cost of trading etc
 // increase consumption of resources during sailing and resting
 // ADD A DIFFUCULTY SELECTOR AT START OF GAME - changes starting resources diffuculty ofd everything etc
 // ship should only display when the first choice sail to next island is chosen
+// add more detailed conversations and different cases for each island as traders get more aggresive
+// add bandits who steal the treasure and other resources
+// option to gather materials to upgrade pirate ship or buy new pirate ship
+// option to name pirate ship
+// fix negative when you trade with locals
+// fix weird traveling paranthesis on scroll in clear
+// add bartering system

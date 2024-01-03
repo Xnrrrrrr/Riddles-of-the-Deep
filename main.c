@@ -105,27 +105,45 @@ void initializePirate(Pirate *pirate, Difficulty difficulty) {
 
 // Function to initialize the pirate ship and crew
 void initializeShip(Ship* ship, Difficulty difficulty) {
-    ship->distance = 0;                     // tweak intiial resources here steven H
+    ship->distance = 0;
     ship->treasure = 0;
     ship->food = 30;
     ship->cannonballs = 10;
     ship->rum = 20;
     ship->health = 100;
 
+    // Different names for each difficulty level
+    const char* easyNames[] = {"Stephen H", "Roonie Carmichael", "Young Nostril", "The Houdinizer"};
+    const char* normalNames[] = {"Checkaroon", "Checkarog", "Roger", "Rimjobby"};
+    const char* hardNames[] = {"Steve Jobs", "Jobbathan", "Glycerine", "Ivan"};
+
+    const char** names;  // Pointer to the array of names based on difficulty, utilizes a double pointer
+
+    // Set the pointer to the appropriate array of names based on difficulty
+    switch (difficulty) {
+        case EASY:
+            names = easyNames;
+            break;
+        case NORMAL:
+            names = normalNames;
+            break;
+        case HARD:
+            names = hardNames;
+            break;
+        default:
+            // Default to easy names if difficulty is not recognized
+            names = easyNames;
+            break;
+    }
+
+    // Assign names to pirates
     for (int i = 0; i < 4; i++) {
-        snprintf(ship->crew[i].name, sizeof(ship->crew[i].name), "Pirate %d", i + 1);
+        snprintf(ship->crew[i].name, sizeof(ship->crew[i].name), "%s", names[i]);
         ship->crew[i].health = 100;
         ship->crew[i].morale = 100;
         ship->crew[i].experience = 0;
         initializePirate(&ship->crew[i], difficulty);
     }
-}
-
-// Function to clear the terminal screen
-
-void clearScreen() {
-    system("cls"); // For windows
-    // system("clear"); // For linux/unix
 }
 
 

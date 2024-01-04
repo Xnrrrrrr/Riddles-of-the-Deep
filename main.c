@@ -16,7 +16,7 @@ typedef struct {
     int leadership;     // leadership skill how well a crew member leads others
 } Attributes;
 
-// define an enum for diffuculty selection
+// define an enum for difficulty selection
 typedef enum {
     EASY,
     NORMAL,
@@ -63,7 +63,7 @@ typedef enum {
 
 
 
-// Function to initialize attributes based on difficulty
+// Function to initialize skilling attributes based on difficulty
 void initializePirateAttributes(Attributes *attributes, Difficulty difficulty) {
     switch (difficulty) {
         case EASY:
@@ -103,29 +103,47 @@ void initializePirate(Pirate *pirate, Difficulty difficulty) {
 }
 
 
-// Function to initialize the pirate ship and crew
+// Function to initialize the pirate ship and starting resources
 void initializeShip(Ship* ship, Difficulty difficulty) {
-    ship->distance = 0;                     // tweak intiial resources here steven H
+    ship->distance = 0;
     ship->treasure = 0;
     ship->food = 30;
     ship->cannonballs = 10;
     ship->rum = 20;
     ship->health = 100;
 
+    // Different names for crew members for each difficulty level
+    const char* easyNames[] = {"Stephen H", "Roonie Carmichael", "Young Nostril", "The Houdinizer"};
+    const char* normalNames[] = {"Checkaroon", "Checkarog", "Roger", "Rimjobby"};
+    const char* hardNames[] = {"Steve Jobs", "Jobbathan", "Glycerine", "Ivan"};
+
+    const char** names;  // double Pointer to the array of names based on difficulty, utilizes a double pointer
+
+    // Set the pointer to the appropriate array of names based on difficulty
+    switch (difficulty) {
+        case EASY:
+            names = easyNames;
+            break;
+        case NORMAL:
+            names = normalNames;
+            break;
+        case HARD:
+            names = hardNames;
+            break;
+        default:
+            // Default to easy names if difficulty is not recognized
+            names = easyNames;
+            break;
+    }
+
+    // Assign names to pirates // iterate through each pirate and assign them their names
     for (int i = 0; i < 4; i++) {
-        snprintf(ship->crew[i].name, sizeof(ship->crew[i].name), "Pirate %d", i + 1);
+        snprintf(ship->crew[i].name, sizeof(ship->crew[i].name), "%s", names[i]);
         ship->crew[i].health = 100;
         ship->crew[i].morale = 100;
         ship->crew[i].experience = 0;
         initializePirate(&ship->crew[i], difficulty);
     }
-}
-
-// Function to clear the terminal screen
-
-void clearScreen() {
-    system("cls"); // For windows
-    // system("clear"); // For linux/unix
 }
 
 
@@ -140,6 +158,7 @@ void initializeIsland(Island* island, const char* name, const char* description,
     island->rumAvailable = rum;
 }
 
+// function to display the ship status visual
 void displayShipStatusVisual() {
     printf(" \n");
     printf("                                      .(  )`-._\n");
@@ -177,13 +196,9 @@ void displayShipStatusVisual() {
     printf("   _.-` ``--..  ..  `.-._  `._  `- `-._ .-_. ._.- -._ --.._`` _.-``-.\n");
 
 
-// add a way to generate four different pirate asci arts to the right of the ship
-// generate
-
-
 }
 
-// Function to display the status of the pirate ship
+// Function to display the status of the pirate ship, weather and crew members
 void displayShipStatus(Ship ship, Weather weather) {
     displayShipStatusVisual();
     printf("    _______________________________________________________\n");
@@ -300,7 +315,7 @@ void randomEvent(Ship* ship, Weather* weather, Island* currentIsland) {
 
     }
 
-    // penalties for resource shortages     ADD CANNONBALL SHORTAGE
+    // if statement with nested for loop and nested if statement - penalties for food shortage     ADD CANNONBALL SHORTAGE
     if (ship->food == 0) {
         printf("Your crew is hungry! Morale decreased.\n");
         for (int i = 0; i < 4; i++) {
@@ -311,6 +326,7 @@ void randomEvent(Ship* ship, Weather* weather, Island* currentIsland) {
         }
     }
 
+    // if statement with nested for loop and nested if statement - penalties for rum shortage
     if (ship->rum == 0) {
         printf("Your crew is thirsty! Morale decreased.\n");
         for (int i = 0; i < 4; i++) {
@@ -362,7 +378,7 @@ void decreaseTreasure(Ship* ship, int amount) {
     }
 }
 
-// Function to consume food
+// Function to consume food   // this will have to raise health and morale, needs logic
 void consumeFood(Ship* ship, int amount) {
     ship->food -= amount;
     if (ship->food < 0) {
@@ -380,7 +396,7 @@ void decreaseCrewExperience(Ship* ship, int amount) {
     }
 }
 
-// Function to simulate the player's decision during the pirate journey
+// Function to simulate the player's decision making process during the pirate journey
 void makeDecision(Ship* ship, Island* currentIsland, int currentIslandIndex, Weather* weather) {
     int continue_from_choice = 1;
     int choice = 0;
@@ -568,6 +584,7 @@ void makeDecision(Ship* ship, Island* currentIsland, int currentIslandIndex, Wea
         }
     }
 
+    // not sure why we have functions ensuring food and rum stay above 0
     if (ship->food < 0) {
         ship->food = 0;
     }
@@ -576,6 +593,7 @@ void makeDecision(Ship* ship, Island* currentIsland, int currentIslandIndex, Wea
         ship->rum = 0;
     }
 
+    // function call passing three parameters
     randomEvent(ship, weather, currentIsland);
 
 
@@ -593,8 +611,9 @@ int isGameOver(Ship ship) {
         }
     }
 
+    // if statement - Game over if the ship reaches 200 nautical miles
     if (ship.distance >= 200) {
-        return 1; // Game over if the ship reaches 200 nautical miles
+        return 1;
     }
 
     return 0; // Game continues

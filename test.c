@@ -74,12 +74,12 @@ typedef struct {
     bool is_looted;
 } Island;
 
-Difficulty difficulty;
+Difficulty difficulty;      // declaring
 
-Attributes getBasePirateAttributes() {
+Attributes getBasePirateAttributes(Difficulty difficulty) {
     Attributes baseAttributes;
 
-    int thievery_base = 10 + rand() % 7; // 10 to 16
+    int thievery_base = 10 + rand() % 7; // 10 to 16        // assigns all baseAttributes to the pirates
     int charisma_base = 8 + rand() % 7; // 8 to 14
     int seamanship_base = 12 + rand() % 7; // 12 to 18
     int medicine_base = 6 + rand() % 7; // 6 to 12
@@ -95,7 +95,7 @@ Attributes getBasePirateAttributes() {
     baseAttributes.leadership_exp = 0;
     baseAttributes.carpentry_exp = 0;
 
-    switch (difficulty) {
+    switch (difficulty) {                               // switch case based on diff, that divides base attributes
         case EASY:
             baseAttributes.thievery = thievery_base;
             baseAttributes.charisma = charisma_base;
@@ -127,7 +127,7 @@ Attributes getBasePirateAttributes() {
             break;
     }
 
-    return baseAttributes;
+    return baseAttributes;      // returns the baseAttributes to the main
 }
 
 void initializeIslands(Island islands[], int numIslands) {          // function that TAKES island array and numIslands to

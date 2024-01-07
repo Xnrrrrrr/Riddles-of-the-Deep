@@ -4,6 +4,9 @@
 #include <time.h>
 #include <unistd.h>
 #include <stdbool.h>
+#include <string.h>  // allows for strcmp (compares strings)
+
+#include "islands.h"
 
 #define MAX_PIRATE_NAME_LENGTH 8
 #define MAX_STRING_LENGTH 100
@@ -11,6 +14,20 @@
 #define NUMBER_OF_ISLANDS 22
 #define RESTOCK_RATE 3
 #define MAX_LOOT 80
+
+// ncurse macros
+#define TEXT_BORDER_X 216
+#define TEXT_BORDER_Y 25
+#define ATTRIBUTE_BORDER_X 78
+#define ATTRIBUTE_BORDER_Y 38
+#define STATS_BORDER_X 78
+#define STATS_BORDER_Y 39
+#define VISUAL_BORDER_X 210
+#define VISUAL_BORDER_Y 44
+#define PADDING_Y 1
+#define PADDING_X 2
+#define NUM_BOXES_X 3
+#define NUM_BOXES_Y 3
 
 typedef struct {
     int thievery;
@@ -58,21 +75,6 @@ typedef struct {
     bool is_at_sea;
     Pirate crew[NUMBER_OF_PIRATES];
 } Ship;
-
-typedef struct {
-    char name[MAX_STRING_LENGTH];
-    char description[MAX_STRING_LENGTH];
-    int treasure_available;
-    int max_treasure;
-    int food_available;
-    int max_food;
-    int cannonballs_available;
-    int max_cannonballs;
-    int rum_available;
-    int max_rum;
-    bool is_island_hostile;
-    bool is_looted;
-} Island;
 
 Difficulty difficulty;      // declaring
 
@@ -128,299 +130,6 @@ Attributes getBasePirateAttributes(Difficulty difficulty) {
     }
 
     return baseAttributes;      // returns the baseAttributes to the main
-}
-
-void initializeIslands(Island islands[], int numIslands) {          // function that TAKES island array and numIslands to
-    // Non-hostile islands
-    snprintf(islands[0].name, MAX_STRING_LENGTH, "Tortuga");
-    snprintf(islands[0].description, MAX_STRING_LENGTH, "A lively pirate haven. Starting isle.");
-    islands[0].treasure_available = 4 + rand() % 6; // 4 is lowest, 6 subtracted by 1 + add 4 together will be highest 4-9
-    islands[0].max_treasure = islands[0].treasure_available;
-    islands[0].food_available = 2 + rand() % 5; // 2 to 6
-    islands[0].max_food = islands[0].food_available;
-    islands[0].cannonballs_available = 3 + rand() % 5; // 3 to 7
-    islands[0].max_cannonballs = islands[0].cannonballs_available;
-    islands[0].rum_available = 4 + rand() % 3; // 4 to 6
-    islands[0].max_rum = islands[0].rum_available;
-    islands[0].is_island_hostile = false;
-    islands[0].is_looted = false;
-
-    snprintf(islands[1].name, MAX_STRING_LENGTH, "Crimson Cove");
-    snprintf(islands[1].description, MAX_STRING_LENGTH, "Known for its vibrant red coral reefs");
-    islands[1].treasure_available = 3 + rand() % 7; // 3 - 9
-    islands[1].max_treasure = islands[1].treasure_available;
-    islands[1].food_available = 2 + rand() % 7; // 2 to 8;
-    islands[1].max_food = islands[1].food_available;
-    islands[1].cannonballs_available = 3 + rand() % 7; // 3 to 9
-    islands[1].max_cannonballs = islands[1].cannonballs_available;
-    islands[1].rum_available = 4 + rand() % 6; // 4 to 9
-    islands[1].max_rum = islands[1].rum_available;
-    islands[1].is_island_hostile = false;
-    islands[1].is_looted = false;
-
-    snprintf(islands[2].name, MAX_STRING_LENGTH, "Sainte-Maria");
-    snprintf(islands[2].description, MAX_STRING_LENGTH, "A place where pirates reside.");
-    islands[2].treasure_available = 4 + rand() % 13; // 4 to 16
-    islands[2].max_treasure = islands[2].treasure_available;
-    islands[2].food_available = 2 + rand() % 3; // 2 to 4
-    islands[2].max_food = islands[2].food_available;
-    islands[2].cannonballs_available = 3 + rand() % 5; // 3 to 7
-    islands[2].max_cannonballs = islands[2].cannonballs_available;
-    islands[2].rum_available = 4 + rand() % 3; // 4 to 6
-    islands[2].max_rum = islands[2].rum_available;
-    islands[2].is_island_hostile = false;
-    islands[2].is_looted = false;
-
-    snprintf(islands[3].name, MAX_STRING_LENGTH, "Emerald Isle");
-    snprintf(islands[3].description, MAX_STRING_LENGTH, "Rumored to have mystical emerald artifacts");
-    islands[3].treasure_available = 2 + rand() % 11; // 2-12 because it has emeralds
-    islands[3].max_treasure = islands[3].treasure_available;
-    islands[3].food_available = 2 + rand() % 5; // 2 to 6; counter because it has more treasure
-    islands[3].max_food = islands[3].food_available;
-    islands[3].cannonballs_available = 3 + rand() % 8; // 3 to 10
-    islands[3].max_cannonballs = islands[3].cannonballs_available;
-    islands[3].rum_available = 4 + rand() % 7; // 4 to 10
-    islands[3].max_rum = islands[3].rum_available;
-    islands[3].is_island_hostile = false;
-    islands[3].is_looted = false;
-
-    snprintf(islands[4].name, MAX_STRING_LENGTH, "Gold Rush Atoll");
-    snprintf(islands[4].description, MAX_STRING_LENGTH, "Once the sight of a legendary gold rush");
-    islands[4].treasure_available = 1 + rand() % 3; // 1-3 4 is lowest, 6 subtracted by 1 + add 4 together will be highest 4-9
-    islands[4].max_treasure = islands[4].treasure_available;
-    islands[4].food_available = 4 + rand() % 9; // 4 to 11;
-    islands[4].max_food = islands[4].food_available;
-    islands[4].cannonballs_available = 3 + rand() % 8; // 3 to 10
-    islands[4].max_cannonballs = islands[4].cannonballs_available;
-    islands[4].rum_available = 4 + rand() % 7; // 4 to 10
-    islands[4].max_rum = islands[4].rum_available;
-    islands[4].is_island_hostile = false;
-    islands[4].is_looted = false;
-
-    snprintf(islands[5].name, MAX_STRING_LENGTH, "Whispering Sands");
-    snprintf(islands[5].description, MAX_STRING_LENGTH, "Desert Island with secrets carried by the wind");
-    islands[5].treasure_available = 3 + rand() % 9; // 3- 12
-    islands[5].max_treasure = islands[5].treasure_available;
-    islands[5].food_available = 2 + rand() % 5; // 2 to 6;
-    islands[5].max_food = islands[5].food_available;
-    islands[5].cannonballs_available = 3 + rand() % 8; // 3 to 10
-    islands[5].max_cannonballs = islands[5].cannonballs_available;
-    islands[5].rum_available = 4 + rand() % 7; // 4 to 10
-    islands[5].max_rum = islands[5].rum_available;
-    islands[5].is_island_hostile = false;
-    islands[5].is_looted = false;
-
-    snprintf(islands[6].name, MAX_STRING_LENGTH, "Admiral's Archipelago");
-    snprintf(islands[6].description, MAX_STRING_LENGTH, "Enclave for Pirates of the highest status");
-    islands[6].treasure_available = 3 + rand() % 9; // 3- 12
-    islands[6].max_treasure = islands[6].treasure_available;
-    islands[6].food_available = 2 + rand() % 5; // 2 to 6;
-    islands[6].max_food = islands[6].food_available;
-    islands[6].cannonballs_available = 3 + rand() % 8; // 3 to 10
-    islands[6].max_cannonballs = islands[6].cannonballs_available;
-    islands[6].rum_available = 4 + rand() % 7; // 4 to 10
-    islands[6].max_rum = islands[6].rum_available;
-    islands[6].is_island_hostile = false;
-    islands[6].is_looted = false;
-
-    snprintf(islands[7].name, MAX_STRING_LENGTH, "Port Royal Haven");
-    snprintf(islands[7].description, MAX_STRING_LENGTH, "Shrouded in mystery under the moonlight");
-    islands[7].treasure_available = 3 + rand() % 9; // 3- 12
-    islands[7].max_treasure = islands[7].treasure_available;
-    islands[7].food_available = 2 + rand() % 5; // 2 to 6;
-    islands[7].max_food = islands[7].food_available;
-    islands[7].cannonballs_available = 3 + rand() % 8; // 3 to 10
-    islands[7].max_cannonballs = islands[7].cannonballs_available;
-    islands[7].rum_available = 4 + rand() % 7; // 4 to 10
-    islands[7].max_rum = islands[7].rum_available;
-    islands[7].is_island_hostile = false;
-    islands[7].is_looted = false;
-
-    snprintf(islands[8].name, MAX_STRING_LENGTH, "Nassau Harbor");
-    snprintf(islands[8].description, MAX_STRING_LENGTH, "Freedom port, pirate democracy, vibrant nightlife, notorious captains thrive");
-    islands[8].treasure_available = 3 + rand() % 9; // 3- 12
-    islands[8].max_treasure = islands[8].treasure_available;
-    islands[8].food_available = 2 + rand() % 5; // 2 to 6;
-    islands[8].max_food = islands[8].food_available;
-    islands[8].cannonballs_available = 3 + rand() % 8; // 3 to 10
-    islands[8].max_cannonballs = islands[8].cannonballs_available;
-    islands[8].rum_available = 4 + rand() % 7; // 4 to 10
-    islands[8].max_rum = islands[8].rum_available;
-    islands[8].is_island_hostile = false;
-    islands[8].is_looted = false;
-
-    snprintf(islands[9].name, MAX_STRING_LENGTH, "Buccaneers Refuge");
-    snprintf(islands[9].description, MAX_STRING_LENGTH, "Sanctuary for outcasts, camaraderie, shared spoils, legendary pirate lore");
-    islands[9].treasure_available = 3 + rand() % 9; // 3- 12
-    islands[9].max_treasure = islands[9].treasure_available;
-    islands[9].food_available = 2 + rand() % 5; // 2 to 6;
-    islands[9].max_food = islands[9].food_available;
-    islands[9].cannonballs_available = 3 + rand() % 8; // 3 to 10
-    islands[9].max_cannonballs = islands[9].cannonballs_available;
-    islands[9].rum_available = 4 + rand() % 7; // 4 to 10
-    islands[9].max_rum = islands[9].rum_available;
-    islands[9].is_island_hostile = false;
-    islands[9].is_looted = false;
-
-    snprintf(islands[10].name, MAX_STRING_LENGTH, "Gold Coast Retreat");
-    snprintf(islands[10].description, MAX_STRING_LENGTH, "Opulent haven, lavish lifestyles, treacherous alliances, high-stakes intrigues unfold.");
-    islands[10].treasure_available = 3 + rand() % 9; // 3- 12
-    islands[10].max_treasure = islands[10].treasure_available;
-    islands[10].food_available = 2 + rand() % 5; // 2 to 6;
-    islands[10].max_food = islands[10].food_available;
-    islands[10].cannonballs_available = 3 + rand() % 8; // 3 to 10
-    islands[10].max_cannonballs = islands[10].cannonballs_available;
-    islands[10].rum_available = 4 + rand() % 7; // 4 to 10
-    islands[10].max_rum = islands[10].rum_available;
-    islands[10].is_island_hostile = false;
-    islands[10].is_looted = false;
-
-
-    // Add more non-hostile islands as needed...
-
-    // Hostile islands
-    snprintf(islands[11].name, MAX_STRING_LENGTH, "Isla de Muerta");
-    snprintf(islands[11].description, MAX_STRING_LENGTH, "A mysterious and dangerous island.");
-    islands[11].treasure_available = 3 + rand() % 9; // 3- 12
-    islands[11].max_treasure = islands[11].treasure_available;
-    islands[11].food_available = 2 + rand() % 5; // 2 to 6;
-    islands[11].max_food = islands[11].food_available;
-    islands[11].cannonballs_available = 3 + rand() % 8; // 3 to 10
-    islands[11].max_cannonballs = islands[11].cannonballs_available;
-    islands[11].rum_available = 4 + rand() % 7; // 4 to 10
-    islands[11].max_rum = islands[11].rum_available;
-    islands[11].is_island_hostile = true;
-    islands[11].is_looted = false;
-
-    snprintf(islands[12].name, MAX_STRING_LENGTH, "Skullcap Atoll");
-    snprintf(islands[12].description, MAX_STRING_LENGTH, "Dreaded prison, pirate executions, haunted waters, cursed shores beckon danger");
-    islands[12].treasure_available = 3 + rand() % 9; // 3- 12
-    islands[12].max_treasure = islands[12].treasure_available;
-    islands[12].food_available = 2 + rand() % 5; // 2 to 6;
-    islands[12].max_food = islands[12].food_available;
-    islands[12].cannonballs_available = 3 + rand() % 8; // 3 to 10
-    islands[12].max_cannonballs = islands[12].cannonballs_available;
-    islands[12].rum_available = 4 + rand() % 7; // 4 to 10
-    islands[12].max_rum = islands[12].rum_available;
-    islands[12].is_island_hostile = true;
-    islands[12].is_looted = false;
-
-    snprintf(islands[13].name, MAX_STRING_LENGTH, "Dead Man's Reef");
-    snprintf(islands[13].description, MAX_STRING_LENGTH, "A mysterious and dangerous island, Ship graveyard, treacherous currents, ghostly whispers, cursed maritime history.");
-    islands[13].treasure_available = 3 + rand() % 9; // 3- 12
-    islands[13].max_treasure = islands[13].treasure_available;
-    islands[13].food_available = 2 + rand() % 5; // 2 to 6;
-    islands[13].max_food = islands[13].food_available;
-    islands[13].cannonballs_available = 3 + rand() % 8; // 3 to 10
-    islands[13].max_cannonballs = islands[13].cannonballs_available;
-    islands[13].rum_available = 4 + rand() % 7; // 4 to 10
-    islands[13].max_rum = islands[13].rum_available;
-    islands[13].is_island_hostile = true;
-    islands[13].is_looted = false;
-
-    snprintf(islands[14].name, MAX_STRING_LENGTH, "Noose Point");
-    snprintf(islands[14].description, MAX_STRING_LENGTH, "Infamous for executions, pirate justice, a grim place of finality");
-    islands[14].treasure_available = 3 + rand() % 9; // 3- 12
-    islands[14].max_treasure = islands[14].treasure_available;
-    islands[14].food_available = 2 + rand() % 5; // 2 to 6;
-    islands[14].max_food = islands[14].food_available;
-    islands[14].cannonballs_available = 3 + rand() % 8; // 3 to 10
-    islands[14].max_cannonballs = islands[14].cannonballs_available;
-    islands[14].rum_available = 4 + rand() % 7; // 4 to 10
-    islands[14].max_rum = islands[14].rum_available;
-    islands[14].is_island_hostile = true;
-    islands[14].is_looted = false;
-
-    snprintf(islands[15].name, MAX_STRING_LENGTH, "Red Tide Haven");
-    snprintf(islands[15].description, MAX_STRING_LENGTH, "Blood-soaked shores, notorious battles, relentless pirates, danger on every wave");
-    islands[15].treasure_available = 3 + rand() % 9; // 3- 12
-    islands[15].max_treasure = islands[15].treasure_available;
-    islands[15].food_available = 2 + rand() % 5; // 2 to 6;
-    islands[15].max_food = islands[15].food_available;
-    islands[15].cannonballs_available = 3 + rand() % 8; // 3 to 10
-    islands[15].max_cannonballs = islands[15].cannonballs_available;
-    islands[15].rum_available = 4 + rand() % 7; // 4 to 10
-    islands[15].max_rum = islands[15].rum_available;
-    islands[15].is_island_hostile = true;
-    islands[15].is_looted = false;
-
-    snprintf(islands[16].name, MAX_STRING_LENGTH, "Calico's Cursed Island");
-    snprintf(islands[16].description, MAX_STRING_LENGTH, "Infested by pirate outcasts, betrayal, buried grudges, an island of strife");
-    islands[16].treasure_available = 3 + rand() % 9; // 3- 12
-    islands[16].max_treasure = islands[16].treasure_available;
-    islands[16].food_available = 2 + rand() % 5; // 2 to 6;
-    islands[16].max_food = islands[16].food_available;
-    islands[16].cannonballs_available = 3 + rand() % 8; // 3 to 10
-    islands[16].max_cannonballs = islands[16].cannonballs_available;
-    islands[16].rum_available = 4 + rand() % 7; // 4 to 10
-    islands[16].max_rum = islands[16].rum_available;
-    islands[16].is_island_hostile = true;
-    islands[16].is_looted = false;
-
-    snprintf(islands[17].name, MAX_STRING_LENGTH, "Porto Desperation Isle");
-    snprintf(islands[17].description, MAX_STRING_LENGTH, "Exile's refuge, banished pirates, desperate actions, a last resort");
-    islands[17].treasure_available = 3 + rand() % 9; // 3- 12
-    islands[17].max_treasure = islands[17].treasure_available;
-    islands[17].food_available = 2 + rand() % 5; // 2 to 6;
-    islands[17].max_food = islands[17].food_available;
-    islands[17].cannonballs_available = 3 + rand() % 8; // 3 to 10
-    islands[17].max_cannonballs = islands[17].cannonballs_available;
-    islands[17].rum_available = 4 + rand() % 7; // 4 to 10
-    islands[17].max_rum = islands[17].rum_available;
-    islands[17].is_island_hostile = true;
-    islands[17].is_looted = false;
-
-    snprintf(islands[18].name, MAX_STRING_LENGTH, "Tunis");
-    snprintf(islands[18].description, MAX_STRING_LENGTH, "Desolate marsh isle, treacherous betrayal, festering vendettas, a realm gripped by strife");
-    islands[18].treasure_available = 3 + rand() % 9; // 3- 12
-    islands[18].max_treasure = islands[18].treasure_available;
-    islands[18].food_available = 2 + rand() % 5; // 2 to 6;
-    islands[18].max_food = islands[18].food_available;
-    islands[18].cannonballs_available = 3 + rand() % 8; // 3 to 10
-    islands[18].max_cannonballs = islands[18].cannonballs_available;
-    islands[18].rum_available = 4 + rand() % 7; // 4 to 10
-    islands[18].max_rum = islands[18].rum_available;
-    islands[18].is_island_hostile = true;
-    islands[18].is_looted = false;
-
-    snprintf(islands[19].name, MAX_STRING_LENGTH, "Barataria Bay");
-    snprintf(islands[19].description, MAX_STRING_LENGTH, "Treacherous stronghold, pirate vendettas,");
-    islands[19].treasure_available = 3 + rand() % 9; // 3- 12
-    islands[19].max_treasure = islands[19].treasure_available;
-    islands[19].food_available = 2 + rand() % 5; // 2 to 6;
-    islands[19].max_food = islands[19].food_available;
-    islands[19].cannonballs_available = 3 + rand() % 8; // 3 to 10
-    islands[19].max_cannonballs = islands[19].cannonballs_available;
-    islands[19].rum_available = 4 + rand() % 7; // 4 to 10
-    islands[19].max_rum = islands[19].rum_available;
-    islands[19].is_island_hostile = true;
-    islands[19].is_looted = false;
-
-    snprintf(islands[20].name, MAX_STRING_LENGTH, "Blackbeard's Abyss Isle");
-    snprintf(islands[20].description, MAX_STRING_LENGTH, "Shrouded cove, ominous legends, a feared and shadowed retreat");
-    islands[20].treasure_available = 3 + rand() % 9; // 3- 12
-    islands[20].max_treasure = islands[20].treasure_available;
-    islands[20].food_available = 2 + rand() % 5; // 2 to 6;
-    islands[20].max_food = islands[20].food_available;
-    islands[20].cannonballs_available = 3 + rand() % 8; // 3 to 10
-    islands[20].max_cannonballs = islands[20].cannonballs_available;
-    islands[20].rum_available = 4 + rand() % 7; // 4 to 10
-    islands[20].max_rum = islands[20].rum_available;
-    islands[20].is_island_hostile = true;
-    islands[20].is_looted = false;
-
-    snprintf(islands[21].name, MAX_STRING_LENGTH, "Corsair Bastion");
-    snprintf(islands[21].description, MAX_STRING_LENGTH, "Pirate stronghold, ceaseless raids, enslaved shores, echoes of lawlessness");
-    islands[21].treasure_available = 3 + rand() % 9; // 3- 12
-    islands[21].max_treasure = islands[21].treasure_available;
-    islands[21].food_available = 2 + rand() % 5; // 2 to 6;
-    islands[21].max_food = islands[21].food_available;
-    islands[21].cannonballs_available = 3 + rand() % 8; // 3 to 10
-    islands[21].max_cannonballs = islands[21].cannonballs_available;
-    islands[21].rum_available = 4 + rand() % 7; // 4 to 10
-    islands[21].max_rum = islands[21].rum_available;
-    islands[21].is_island_hostile = true;
-    islands[21].is_looted = false;
 }
 
 int findNewIslandIndex(int current_island, int num_islands) {
@@ -498,32 +207,140 @@ float getRandomFloat(void) {
     return rand() / (float)RAND_MAX;
 }
 
-int main() {
-    system("mode con: cols=300 lines=80");
+void drawAttributeBoxes(WINDOW *attribute_area) {
+    int board_height = ATTRIBUTE_BORDER_Y - 2 * PADDING_Y;
+    int board_width = ATTRIBUTE_BORDER_X - 2 * PADDING_X;
 
-    srand((unsigned int)time(NULL));
+    int cell_height = board_height / 3;
+    int cell_width = board_width / 3;
+
+    for (int i = 1; i < 3; i++) {
+        // Draw horizontal lines
+        mvwhline(attribute_area, PADDING_Y + i * cell_height - 1, PADDING_X, ACS_HLINE, board_width);
+    }
+
+    for (int i = 1; i < 3; i++) {
+        // Draw vertical lines
+        mvwvline(attribute_area, PADDING_Y, PADDING_X + i * cell_width, ACS_VLINE, board_height);
+    }
+
+    wrefresh(attribute_area);
+}
+
+// Accepts area type and a string such as "t" for text area, "a" for attribute area, "s" for stats area, and "v" for visual area
+int clearAndRedraw(WINDOW *window, const char *identifier){ // "const char *" is used to represent string literals
+    if (strcmp(identifier, "t") == 0) {
+        wclear(window);
+        box(window, 0, 0);
+        mvwprintw(window, 0, 2, "Text Area");
+        wrefresh(window);
+    } else if (strcmp(identifier, "a") == 0) {
+        wclear(window);
+        box(window, 0, 0);
+        drawAttributeBoxes(window);
+        mvwprintw(window, 0, 2, "Attribute Area");
+        wrefresh(window);
+    } else if (strcmp(identifier, "s") == 0) {
+        wclear(window);
+        box(window, 0, 0);
+        mvwprintw(window, 0, 2, "Stats Area");
+        wrefresh(window);
+    } else if (strcmp(identifier, "v") == 0) {
+        wclear(window);
+        box(window, 0, 0);
+        mvwprintw(window, 0, 2, "Visual Area");
+        wrefresh(window);
+    } else {
+        // Handle the case where identifier doesn't match any known value
+        return -1;
+    }
+    return 0;
+}
+
+// accepts attribute_area, myShip, and number_of_alive_pirates to calculate the position within the attribute area
+void renderPirateAttributes(WINDOW *attribute_area, Ship myShip, int number_of_alive_pirates) {
+    clearAndRedraw(attribute_area, "a");
+    for (int i = 0; i < number_of_alive_pirates; i++) {
+        int box_row = i / NUM_BOXES_X;   // Calculate row based on attribute layout
+        int box_col = i % NUM_BOXES_Y;   // Calculate column based on attribute layout
+
+        int cell_height = (ATTRIBUTE_BORDER_Y - 2 * PADDING_Y) / 3;  // Calculates height of each cell
+        int cell_width = (ATTRIBUTE_BORDER_X - 2 * PADDING_X) / 3;  //Calculates width of each cell
+
+        int start_y = PADDING_Y + box_row * cell_height + 1;  // Finds where to start text based on y-axis
+        int start_x = PADDING_X + box_col * cell_width + 1;  // Finds where to start text based on x-axis
+
+        mvwprintw(attribute_area, start_y, start_x + 2, "%s", myShip.crew[i].name);
+        mvwprintw(attribute_area, start_y + 1, start_x + 2, "Thievery: %d", myShip.crew[i].attributes.thievery);
+        mvwprintw(attribute_area, start_y + 2, start_x + 2, "Charisma: %d", myShip.crew[i].attributes.charisma);
+        mvwprintw(attribute_area, start_y + 3, start_x + 2, "Seamanship: %d", myShip.crew[i].attributes.seamanship);
+        mvwprintw(attribute_area, start_y + 4, start_x + 2, "Medicine: %d", myShip.crew[i].attributes.medicine);
+        mvwprintw(attribute_area, start_y + 5, start_x + 2, "Instinct: %d", myShip.crew[i].attributes.instinct);
+        mvwprintw(attribute_area, start_y + 6, start_x + 2, "Leadership: %d", myShip.crew[i].attributes.leadership);
+        mvwprintw(attribute_area, start_y + 7, start_x + 2, "Carpentry: %d", myShip.crew[i].attributes.carpentry);
+        mvwprintw(attribute_area, start_y + 8, start_x + 2, "Health: %d", myShip.crew[i].health);
+        mvwprintw(attribute_area, start_y + 9, start_x + 2, "Morale: %d", myShip.crew[i].morale);
+        wrefresh(attribute_area);
+    }
+}
+
+int main() {
+    system("mode con: cols=300 lines=80");  // Set the initial console size; 300 columns (x) and 80 lines (y)
+    srand((unsigned int)time(NULL));  // srand function is used to seed the random number generator. time makes it so the unique value is based on the current time in seconds from Jan 1st, 1970 (different value as time progresses when the app is executed)
 
     char last_decision;
 
     do {
-        int difficultyChoice;
+        initscr();  // Starts curses mode
 
+        refresh();  // Keeps the boxes from disappearing
+
+        int xMax, yMax;
+        getmaxyx(stdscr, yMax, xMax);
+
+        int text_area_y = yMax - TEXT_BORDER_Y - PADDING_Y;
+        int right_area_x = xMax - ATTRIBUTE_BORDER_X - PADDING_X;
+        int bottom_area_y = yMax - ATTRIBUTE_BORDER_Y - PADDING_Y;
+
+        WINDOW *text_area = newwin(TEXT_BORDER_Y, TEXT_BORDER_X, text_area_y, PADDING_X);
+        box(text_area, 0, 0);
+        mvwprintw(text_area, 0, 2, "Text Area");
+        wrefresh(text_area);
+
+        WINDOW *attribute_area = newwin(ATTRIBUTE_BORDER_Y, ATTRIBUTE_BORDER_X, bottom_area_y, right_area_x);
+        box(attribute_area, 0, 0);
+        mvwprintw(attribute_area, 0, 2, "Attribute Area");
+        drawAttributeBoxes(attribute_area);
+        wrefresh(attribute_area);
+
+        WINDOW *stats_area = newwin(STATS_BORDER_Y, STATS_BORDER_X, PADDING_Y, right_area_x);
+        box(stats_area, 0, 0);
+        mvwprintw(stats_area, 0, 2, "Stats Area");
+        wrefresh(stats_area);
+
+        WINDOW *visual_area = newwin(VISUAL_BORDER_Y, VISUAL_BORDER_X, (PADDING_Y * 8), ((PADDING_X * 3) - 1));
+        box(visual_area, 0, 0);
+        mvwprintw(visual_area, 0, 2, "Visual Area");
+        wrefresh(visual_area);
+
+
+
+        int difficulty_choice;
         float loot_factor_forgiveness;
-
-        char pirate_name[MAX_PIRATE_NAME_LENGTH];
 
         Island islands[NUMBER_OF_ISLANDS];
         initializeIslands(islands, NUMBER_OF_ISLANDS);
 
-        // Randomly select a non-hostile starting island
         int current_island_index;
         do {
-            current_island_index = rand() % NUMBER_OF_ISLANDS;
-        } while (islands[current_island_index].is_island_hostile);
+            current_island_index = rand() % NUMBER_OF_ISLANDS; 
+        } while (islands[current_island_index].is_island_hostile);  // Randomly selects a non-hostile starting island
 
-        // printf("You start on the island of %s.\n", islands[current_island_index].name);
-        // printf("Description: %s\n", islands[current_island_index].description);
-        // printf("Index: %d\n", current_island_index);
+        mvwprintw(text_area, 2, 2, "You start on the island of %s.", islands[current_island_index].name);
+        mvwprintw(text_area, 3, 2, "Description: %s", islands[current_island_index].description);
+        mvwprintw(text_area, 4, 2, "Press any key to continue:");
+        wrefresh(text_area);
+        getch();
 
         Ship myShip;
         myShip.health = 100;
@@ -538,19 +355,23 @@ int main() {
 
         int hostile_port_choice;
 
-        bool has_treasure_map = false;
+        // Commented so compiler can stop bitching
+        // bool has_treasure_map = false;
 
         while (1) {
-            printf("Enter difficulty level: \n");
-            printf("1: EASY \n");
-            printf("2: NORMAL \n");
-            printf("3: HARD \n");
-            if (scanf(" %d", &difficultyChoice) != 1) {
-                printf("Invalid input. Please enter an integer. \n");
+            clearAndRedraw(text_area, "t");
+            mvwprintw(text_area, 2, 2, "Enter a difficulty level: ");
+            mvwprintw(text_area, 3, 2, "1: Easy");
+            mvwprintw(text_area, 4, 2, "2: Normal");
+            mvwprintw(text_area, 5, 2, "3: Hard");
+            wrefresh(text_area);
 
-                while (getchar() != '\n');
-            } else {
-                if (difficultyChoice == 1) {
+            int ch = wgetch(text_area);
+
+            if (ch != ERR) {
+                difficulty_choice = ch - '0';  // Convert ASCII to integer
+
+                if (difficulty_choice == 1) {
                     difficulty = EASY;
                     myShip.cannonballs = 20;
                     myShip.treasure = 20;
@@ -558,7 +379,7 @@ int main() {
                     myShip.rum = 30;
                     loot_factor_forgiveness = 0.4;
                     break;
-                } else if (difficultyChoice == 2) {
+                } else if (difficulty_choice == 2) {
                     difficulty = NORMAL;
                     myShip.cannonballs = 10;
                     myShip.treasure = 10;
@@ -566,7 +387,7 @@ int main() {
                     myShip.rum = 20;
                     loot_factor_forgiveness = 0.2;
                     break;
-                } else if (difficultyChoice == 3) {
+                } else if (difficulty_choice == 3) {
                     difficulty = HARD;
                     myShip.cannonballs = 4;
                     myShip.treasure = 0;
@@ -575,57 +396,56 @@ int main() {
                     loot_factor_forgiveness = 0.1;
                     break;
                 } else {
-                    printf("Enter an interger between 1 and 3. \n\n");
+                    mvwprintw(text_area, 24, 2, "Enter an interger between 1 and 3.");
+                    wrefresh(text_area);
                 }
-            }
+            }   
         }
+
+        clearAndRedraw(text_area, "t");
 
         for (int i = 0; i < NUMBER_OF_PIRATES; i++) {
             char pirate_name[MAX_PIRATE_NAME_LENGTH];
 
             while (1) {
-                printf("Enter the name of your pirate #%d: (Must be %d characters or less)\n", i + 1, MAX_PIRATE_NAME_LENGTH);
-                scanf(" %s", pirate_name);
+                clearAndRedraw(text_area, "t");
+                mvwprintw(text_area, 2, 2, "Enter the name of your pirate #%d (Must be %d characters or less): ", i + 1, MAX_PIRATE_NAME_LENGTH);
+                wrefresh(text_area);
 
-                if (strlen(pirate_name) <= MAX_PIRATE_NAME_LENGTH) {
+                wgetnstr(text_area, pirate_name, MAX_PIRATE_NAME_LENGTH);
+
+                if (strlen(pirate_name) > 0 && strlen(pirate_name) <= MAX_PIRATE_NAME_LENGTH) {
                     strcpy(myShip.crew[i].name, pirate_name);
                     break;
                 } else {
-                    printf("Try again. The pirate's name should be %d characters or less. \n\n", MAX_PIRATE_NAME_LENGTH);
+                    mvwprintw(text_area, 24, 2, "Try again. The pirate's name should be %d characters or less.", MAX_PIRATE_NAME_LENGTH);
+                    wrefresh(text_area);
                 }
             }
         }
 
-        // Inside the loop where you create pirates
-        for (int i = 0; i < NUMBER_OF_PIRATES; i++) {
+        clearAndRedraw(text_area, "t");
+
+        // Gives pirates there base shit
+        for (int i = 0; i < number_of_alive_pirates; i++) {
             Attributes baseAttributes = getBasePirateAttributes(difficulty);
-            // Other attributes initialization...
             myShip.crew[i].attributes = baseAttributes;
             myShip.crew[i].health = 100;
             myShip.crew[i].morale = 100;
-
-            printf("Pirate %d Attributes:\n", i + 1);
-            printf("Thievery: %d\n", myShip.crew[i].attributes.thievery);
-            printf("Charisma: %d\n", myShip.crew[i].attributes.charisma);
-            printf("Seamanship: %d\n", myShip.crew[i].attributes.seamanship);
-            printf("Medicine: %d\n", myShip.crew[i].attributes.medicine);
-            printf("Instinct: %d\n", myShip.crew[i].attributes.instinct);
-            printf("Leadership: %d\n", myShip.crew[i].attributes.leadership);
-            printf("Carpentry: %d\n", myShip.crew[i].attributes.carpentry);
-            printf("Health: %d\n", myShip.crew[i].health);
-            printf("Morale: %d\n", myShip.crew[i].morale);
-            printf("\n");
         }
 
-        // game loop
+        renderPirateAttributes(attribute_area, myShip, number_of_alive_pirates);
+
+        // Game loop
         while (myShip.health > 0 && number_of_alive_pirates > 0) {
-            // 1 Update game state and perform game logic here --------------------------
+            // 1 Update game state and perform game logic here ----------
 
             // Decrease health of the ship over time
             // myShip.health--;
 
             // Decrease first pirate's health of the ship over time
             // myShip.crew[0].health--;
+
 
             // Check and remove pirates with 0 health
             for (int i = 0; i < number_of_alive_pirates; i++) {
@@ -637,63 +457,72 @@ int main() {
                     number_of_alive_pirates--;
 
                     i--;
+                    renderPirateAttributes(attribute_area, myShip, number_of_alive_pirates);
                 }
             }
 
             // Calculate pirate attributes
             int total_crew_thievery = getTotalThievery(myShip, number_of_alive_pirates);
-            int total_crew_charisma = getTotalCharisma(myShip, number_of_alive_pirates);
-            int total_crew_seamanship = getTotalSeamanship(myShip, number_of_alive_pirates);
-            int total_crew_medicine = getTotalMedicine(myShip, number_of_alive_pirates);
-            int total_crew_instinct = getTotalInstinct(myShip, number_of_alive_pirates);
-            int total_crew_leadership = getTotalLeadership(myShip, number_of_alive_pirates);
-            int total_crew_carpentry = getTotalCarpentry(myShip, number_of_alive_pirates);
+            // int total_crew_charisma = getTotalCharisma(myShip, number_of_alive_pirates);
+            // int total_crew_seamanship = getTotalSeamanship(myShip, number_of_alive_pirates);
+            // int total_crew_medicine = getTotalMedicine(myShip, number_of_alive_pirates);
+            // int total_crew_instinct = getTotalInstinct(myShip, number_of_alive_pirates);
+            // int total_crew_leadership = getTotalLeadership(myShip, number_of_alive_pirates);
+            // int total_crew_carpentry = getTotalCarpentry(myShip, number_of_alive_pirates);
 
-            // 2. Print Current Game State --------------------------
+            // 2. Print Current Game State -----------------------
 
-            //printf("Ship Health: %d\n", myShip.health);
+            //printf("Ship Health: %d", myShip.health);
 
             // for (int i = 0; i < number_of_alive_pirates; i++) {
-            //     printf("%s, hp: %d \n", myShip.crew[i].name, myShip.crew[i].health);
+            //     printf("%s, hp: %d", myShip.crew[i].name, myShip.crew[i].health);
             // }
 
             // 3. Dialog and Chat Options ------------------------------
             if (!myShip.is_at_sea && !islands[current_island_index].is_island_hostile && number_of_alive_pirates != 0) {
                 while (continue_from_while) {
-                    printf("You're at the port of %s. What would you like to do? \n", islands[current_island_index].name);
-                    printf("1. Explore the seas for treasure. \n"); // If food reaches 0, there will be a percent chance that each crew member will die
-                    printf("2. Rest for the day. \n"); // Low chance for a crew member to go awol?
-                    printf("3. Scour the island for riches. \n"); // Chance to lose or find new mates; 
-                    printf("4. Hit the pub with your mates. \n"); // Raises moral but has a chance for one of your mates to get in a fight and injured. Maybe a chance to recruit a new mate for the price of some treasure. Consumes food, rum, and treasure?
-                    printf("5. Trade with the locals. \n"); // chance to buy a treasure map
+                    mvwprintw(text_area, 2, 2, "You're at the port of %s. What would you like to do?", islands[current_island_index].name);
+                    mvwprintw(text_area, 3, 2, "1. Explore the seas for treasure."); // If food reaches 0, there will be a percent chance that each crew member will die
+                    mvwprintw(text_area, 4, 2, "2. Rest for the day."); // Low chance for a crew member to go awol?
+                    mvwprintw(text_area, 5, 2, "3. Scour the island for riches."); // Chance to lose or find new mates; 
+                    mvwprintw(text_area, 6, 2, "4. Hit the pub with your mates."); // Raises moral but has a chance for one of your mates to get in a fight and injured. Maybe a chance to recruit a new mate for the price of some treasure. Consumes food, rum, and treasure?
+                    mvwprintw(text_area, 7, 2, "5. Trade with the locals."); // chance to buy a treasure map
+                    wrefresh(text_area);
 
-                    if (scanf(" %d", &port_choice) != 1) {
-                        printf("Invalid input. Please enter an integer. \n");
+                    int ch = wgetch(text_area);
 
-                        while (getchar() != '\n');
-                    } else {
+                    if (ch != ERR) {
+                        port_choice = ch - '0';  // Convert ASCII to integer
                         switch (port_choice) {
                             case 1:
-                                printf("You set sail in hopes to find some treasure. \n");
+                                clearAndRedraw(text_area, "t");
+                                mvwprintw(text_area, 2, 2, "You set sail in hopes to find some treasure!");
+                                wrefresh(text_area);
+                                sleep(1);
+
                                 distrance_traveled = 8 + rand() % 63; // 8 to 70
                                 myShip.distance += distrance_traveled;
+
                                 if (myShip.distance >= 50 + rand() % 21) { // 50 to 70
                                     int new_island_index = findNewIslandIndex(current_island_index, NUMBER_OF_ISLANDS);
 
                                     current_island_index = new_island_index;
 
-                                    printf("You arrived at an island! \n", islands[current_island_index].name);
+                                    mvwprintw(text_area, 3, 2, "You arrived at an island!");
                                     myShip.distance = 0;
                                     myShip.is_at_sea = false;
                                 } else {
-                                    printf("You traveled %d nautical miles. \n", distrance_traveled);
+                                    mvwprintw(text_area, 3, 2, "You traveled %d nautical miles.", distrance_traveled);
                                     myShip.is_at_sea = true;
                                 }
+                                wrefresh(text_area);
+                                sleep(1);
+
+                                clearAndRedraw(text_area, "t");
+
                                 continue_from_while = 0;
                                 break;
                             case 2:
-                                printf("Continue: \n");
-                                continue_from_while = 0;
                                 break;
                             case 3:
                                 if (!islands[current_island_index].is_looted) {
@@ -741,15 +570,22 @@ int main() {
                                     myShip.food += food_loot_amount;
                                     myShip.cannonballs += cannonball_loot_amount;
                                     myShip.rum += rum_loot_amount;
+                                    // Need to render this into the stats area (I assume that is where the ship health will be)
+
 
                                     // Calculate if mates get injured in the process maybe 20% chance per mate?
                                     for (int i = 0; i < number_of_alive_pirates; i++) {
                                         float damage_chance = getRandomFloat();
                                         int damage_taken = 15 + rand() % 8; // 15 to 22
+
+                                        clearAndRedraw(text_area, "t");
+
                                         if (damage_chance <= 0.2) {
                                             myShip.crew[i].health -= damage_taken;
                                             if (myShip.crew[i].health <= 0) {
-                                                printf("%s died while searching. \n", myShip.crew[i].name);
+                                                mvwprintw(text_area, 2, 2, "%s died while searching.", myShip.crew[i].name);
+                                                wrefresh(text_area);
+                                                
                                                 // Shift remaining pirates to fill the gap
                                                 for (int j = i; j < number_of_alive_pirates - 1; j++) {
                                                     myShip.crew[j] = myShip.crew[j + 1];
@@ -758,33 +594,44 @@ int main() {
 
                                                 i--;
                                             } else {
-                                                printf("%s took %d damage. They now have %d health. \n", myShip.crew[i].name, damage_taken, myShip.crew[i].health);
+                                                mvwprintw(text_area, 2, 2, "%s took %d damage. They now have %d health.", myShip.crew[i].name, damage_taken, myShip.crew[i].health);
+                                                wrefresh(text_area);
                                             }
+                                            renderPirateAttributes(attribute_area, myShip, number_of_alive_pirates);
+                                            sleep(1);
                                         }
                                     }
                                     
+
                                     // mates gain xp based on loot_amount if they weren't injured
                                     
-                                    printf("%d treasure gained. You now have %d treasure \n", treasure_loot_amount, myShip.treasure);
+                                    clearAndRedraw(text_area, "t");
+                                    mvwprintw(text_area, 2, 2, "%d treasure gained. You now have %d treasure", treasure_loot_amount, myShip.treasure);
+                                    wrefresh(text_area);
                                     sleep(1);
-                                    printf("You gained %d food, %d cannonball(s), and %d rum. You now have %d food, %d cannonball(s), and %d rum. \n", food_loot_amount, cannonball_loot_amount, rum_loot_amount, myShip.food, myShip.cannonballs, myShip.rum);
-
+                                    mvwprintw(text_area, 3, 2, "You gained %d food, %d cannonball(s), and %d rum. You now have %d food, %d cannonball(s), and %d rum.", food_loot_amount, cannonball_loot_amount, rum_loot_amount, myShip.food, myShip.cannonballs, myShip.rum);
+                                    wrefresh(text_area);
+                                    sleep(2);
                                     // Mark the island as looted
                                     islands[current_island_index].is_looted = true;
                                     continue_from_while = 0;
                                 } else {
-                                    printf("%s has been looted recently. \n", islands[current_island_index].name);
+                                    clearAndRedraw(text_area, "t");
+                                    mvwprintw(text_area, 2, 2, "%s has been looted recently.", islands[current_island_index].name);
+                                    wrefresh(text_area);
                                     sleep(1);
                                 }
+
+                                clearAndRedraw(text_area, "t");
+
                                 break;
                             case 4:
-                                printf(" \n");
                                 break;
                             case 5:
-                                printf(" \n");
                                 break;
                             default:
-                                printf("Enter an interger between 1 and 5. \n");
+                                mvwprintw(text_area, 24, 2, "Enter an interger between 1 and 5.");
+                                wrefresh(text_area);
                                 break;
                         }
                     }
@@ -801,38 +648,42 @@ int main() {
 
             if (!myShip.is_at_sea && islands[current_island_index].is_island_hostile && number_of_alive_pirates != 0) {
                 while (continue_from_while) {
-                    printf("You're at the port of %s. You hear rumors that this island is not so friendly. What would you like to do next? \n", islands[current_island_index].name);
-                    printf("1: Raid the island \n");
-                    if (scanf(" %d", &hostile_port_choice) != 1) {
-                        printf("Invalid input. Please enter an integer. \n");
+                    mvwprintw(text_area, 2, 2, "You're at the port of %s. You hear rumors that this island is not so friendly. What would you like to do next?", islands[current_island_index].name);
+                    mvwprintw(text_area, 3, 2, "1: Raid the island.");
+                    wrefresh(text_area);
 
-                        while (getchar() != '\n');
-                    } else {
+                    int ch = wgetch(text_area);
+
+                    if (ch != ERR) {
+                        hostile_port_choice = ch - '0';  // Convert ASCII to integer
                         switch (hostile_port_choice) {
                             case 1:
-                                printf("1 \n");
+                                
                                 break;
                             case 2:
-                                printf("2 \n");
+                                
                                 break;
                             case 3:
-                                printf("3 \n");
+                                
                                 break;
                             case 4:
-                                printf("4 \n");
+                               
                                 break;
                             case 5:
-                                printf("5 \n");
+                                
                                 break;
                             default:
-                                printf("Enter an interger between 1 and 5. \n");
+                                mvwprintw(text_area, 24, 2, "Enter an interger between 1 and 5.");
+                                wrefresh(text_area);
                                 break;
                         }
                     }
                 }
             }
             continue_from_while = 1;
+
             // 4. Other Game Logic --------------------------
+
             // Restocking of islands after the fact just-in-case the user ends up on the same island again
             for (int i = 0; i < NUMBER_OF_ISLANDS; i++) {
                 // Check if the island is looted and restock if it is
@@ -864,33 +715,47 @@ int main() {
                         islands[i].rum_available == islands[i].max_rum) {
                         islands[i].is_looted = false;
                     }
-                    // printf("Resources on looted island: Treasure: %d, Food: %d, Cannonballs: %d, Rum: %d  \n", islands[i].treasure_available, islands[i].food_available, islands[i].cannonballs_available, islands[i].rum_available);
                 }
             }
-
 
             //usleep(100000);  // Sleep for 0.1 seconds (100,000 microseconds)
         }
 
+        clearAndRedraw(text_area, "t");
+
         if (myShip.health <= 0) {
-            printf("Game over. Your ship was destroyed. \n");
+            mvwprintw(text_area, (TEXT_BORDER_Y / 2), (TEXT_BORDER_X / 2), "Game over. Your ship was destroyed.");
+            wrefresh(text_area);
         }
 
         if (number_of_alive_pirates == 0) {
-            printf("Game over. All of your mates died. \n");
+            mvwprintw(text_area, (TEXT_BORDER_Y / 2), (TEXT_BORDER_X / 2), "Game over. All of your mates died.");
+            wrefresh(text_area);
         }
 
+        // End game loop
         while (1) {
-            printf("Restart? y/n: \n");
-            scanf(" %c", &last_decision);
+            mvwprintw(text_area, 23, 2,"Restart? y/n:");
+            wrefresh(text_area);
+            
+            last_decision = getch();
 
             if (last_decision == 'y') {
+                clearAndRedraw(text_area, "t");
+                clearAndRedraw(attribute_area, "a");
+                clearAndRedraw(stats_area, "s");
+                clearAndRedraw(visual_area, "v");
                 break;
             } else if (last_decision == 'n') {
+                endwin(); // End curses mode
                 return 0;
             } else {
-                printf("Enter 'y' or 'n'. \n");
+                mvwprintw(text_area, 24, 2, "Enter 'y' or 'n'.");
+                wrefresh(text_area);
+                usleep(500000); // Sleep for a short time to display the message
             }
         }
     } while (last_decision == 'y');
+
+    return 0;
 }

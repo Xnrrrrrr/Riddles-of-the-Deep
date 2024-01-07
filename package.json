@@ -1,7 +1,0 @@
-{
-    "scripts": {
-        "build_test": "gcc -o RotD test.c -LC:/msys64/mingw64/lib -lncursesw",
-        "build_main": "gcc -o RotD main.c -LC:/msys64/mingw64/lib -lncursesw",
-        "start": "start RotD.exe"
-    }
-}

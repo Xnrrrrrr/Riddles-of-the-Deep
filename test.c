@@ -78,8 +78,8 @@ typedef struct {
 
 Difficulty difficulty;      // declaring
 
-Attributes getBasePirateAttributes(Difficulty difficulty) {
-    Attributes baseAttributes;
+Attributes getBasePirateAttributes() {      // method decleration       OOP
+    Attributes baseAttributes;      // creates an object named baseAttributes based on the attributes "class" instantiation creating an occurence
 
     int thievery_base = 10 + rand() % 7; // 10 to 16        // assigns all baseAttributes to the pirates
     int charisma_base = 8 + rand() % 7; // 8 to 14
@@ -134,16 +134,16 @@ Attributes getBasePirateAttributes(Difficulty difficulty) {
 
 int findNewIslandIndex(int current_island, int num_islands) {
     int new_island_index;
-    do {
+    do {                                                            // method so when you leave an island you wont end up there again
         new_island_index = rand() % num_islands;
     } while (new_island_index == current_island);
     return new_island_index;
 }
 
 int getTotalThievery(Ship myShip, int number_of_alive_pirates) {
-    int total_crew_thievery = 0;
-    for (int i = 0; i < number_of_alive_pirates; i++) {
-        total_crew_thievery += myShip.crew[i].attributes.thievery;
+    int total_crew_thievery = 0;                                    // sets total thievery so you can calculate how much resources you can get
+    for (int i = 0; i < number_of_alive_pirates; i++) {             // initializes variable i of type int and sets its value to 0 , increments the value by 1 after each iteraiton
+        total_crew_thievery += myShip.crew[i].attributes.thievery;  // method so when a member dies it decreases when a member dies or can increase when you get new members
     }
     return total_crew_thievery;
 }
@@ -196,15 +196,92 @@ int getTotalCarpentry(Ship myShip, int number_of_alive_pirates) {
     return total_crew_carpentry;
 }
 
-int calculateLoot(int total_crew_thievery, float loot_factor, float max_loot, int available_resources) {
+int calculateLoot(int total_crew_thievery, float loot_factor, float max_loot, int available_resources) {        // function that ensures LA doesnt exceed ML, also calculates it based on total crew thievery and loot factor
     // Type cast to convert from float to int (explicit)
     int loot_amount = (int)(total_crew_thievery * loot_factor);
-    loot_amount = (loot_amount > max_loot) ? max_loot : loot_amount;
+    loot_amount = (loot_amount > max_loot) ? max_loot : loot_amount;            // conditional ternary operator, if LA > ML, ML is assigned to LA
     return (loot_amount > available_resources) ? available_resources : loot_amount;
 }
 
-float getRandomFloat(void) {
+float getRandomFloat(void) {                                            // function for RNG
     return rand() / (float)RAND_MAX;
+}
+
+void drawAttributeBoxes(WINDOW *attribute_area) {
+    int board_height = ATTRIBUTE_BORDER_Y - 2 * PADDING_Y;
+    int board_width = ATTRIBUTE_BORDER_X - 2 * PADDING_X;
+
+    int cell_height = board_height / 3;
+    int cell_width = board_width / 3;
+
+    for (int i = 1; i < 3; i++) {
+        // Draw horizontal lines
+        mvwhline(attribute_area, PADDING_Y + i * cell_height - 1, PADDING_X, ACS_HLINE, board_width);
+    }
+
+    for (int i = 1; i < 3; i++) {
+        // Draw vertical lines
+        mvwvline(attribute_area, PADDING_Y, PADDING_X + i * cell_width, ACS_VLINE, board_height);
+    }
+
+    wrefresh(attribute_area);
+}
+
+// Accepts area type and a string such as "t" for text area, "a" for attribute area, "s" for stats area, and "v" for visual area
+int clearAndRedraw(WINDOW *window, const char *identifier){ // "const char *" is used to represent string literals
+    if (strcmp(identifier, "t") == 0) {
+        wclear(window);
+        box(window, 0, 0);
+        mvwprintw(window, 0, 2, "Text Area");
+        wrefresh(window);
+    } else if (strcmp(identifier, "a") == 0) {
+        wclear(window);
+        box(window, 0, 0);
+        drawAttributeBoxes(window);
+        mvwprintw(window, 0, 2, "Attribute Area");
+        wrefresh(window);
+    } else if (strcmp(identifier, "s") == 0) {
+        wclear(window);
+        box(window, 0, 0);
+        mvwprintw(window, 0, 2, "Stats Area");
+        wrefresh(window);
+    } else if (strcmp(identifier, "v") == 0) {
+        wclear(window);
+        box(window, 0, 0);
+        mvwprintw(window, 0, 2, "Visual Area");
+        wrefresh(window);
+    } else {
+        // Handle the case where identifier doesn't match any known value
+        return -1;
+    }
+    return 0;
+}
+
+// accepts attribute_area, myShip, and number_of_alive_pirates to calculate the position within the attribute area
+void renderPirateAttributes(WINDOW *attribute_area, Ship myShip, int number_of_alive_pirates) {
+    clearAndRedraw(attribute_area, "a");
+    for (int i = 0; i < number_of_alive_pirates; i++) {
+        int box_row = i / NUM_BOXES_X;   // Calculate row based on attribute layout
+        int box_col = i % NUM_BOXES_Y;   // Calculate column based on attribute layout
+
+        int cell_height = (ATTRIBUTE_BORDER_Y - 2 * PADDING_Y) / 3;  // Calculates height of each cell
+        int cell_width = (ATTRIBUTE_BORDER_X - 2 * PADDING_X) / 3;  //Calculates width of each cell
+
+        int start_y = PADDING_Y + box_row * cell_height + 1;  // Finds where to start text based on y-axis
+        int start_x = PADDING_X + box_col * cell_width + 1;  // Finds where to start text based on x-axis
+
+        mvwprintw(attribute_area, start_y, start_x + 2, "%s", myShip.crew[i].name);
+        mvwprintw(attribute_area, start_y + 1, start_x + 2, "Thievery: %d", myShip.crew[i].attributes.thievery);
+        mvwprintw(attribute_area, start_y + 2, start_x + 2, "Charisma: %d", myShip.crew[i].attributes.charisma);
+        mvwprintw(attribute_area, start_y + 3, start_x + 2, "Seamanship: %d", myShip.crew[i].attributes.seamanship);
+        mvwprintw(attribute_area, start_y + 4, start_x + 2, "Medicine: %d", myShip.crew[i].attributes.medicine);
+        mvwprintw(attribute_area, start_y + 5, start_x + 2, "Instinct: %d", myShip.crew[i].attributes.instinct);
+        mvwprintw(attribute_area, start_y + 6, start_x + 2, "Leadership: %d", myShip.crew[i].attributes.leadership);
+        mvwprintw(attribute_area, start_y + 7, start_x + 2, "Carpentry: %d", myShip.crew[i].attributes.carpentry);
+        mvwprintw(attribute_area, start_y + 8, start_x + 2, "Health: %d", myShip.crew[i].health);
+        mvwprintw(attribute_area, start_y + 9, start_x + 2, "Morale: %d", myShip.crew[i].morale);
+        wrefresh(attribute_area);
+    }
 }
 
 void drawAttributeBoxes(WINDOW *attribute_area) {

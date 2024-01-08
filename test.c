@@ -78,7 +78,7 @@ typedef struct {
 
 Difficulty difficulty;      // declaring
 
-Attributes getBasePirateAttributes() {      // method decleration       OOP
+Attributes getBasePirateAttributes() {      // function declaration       OOP
     Attributes baseAttributes;      // creates an object named baseAttributes based on the attributes "class" instantiation creating an occurence
 
     int thievery_base = 10 + rand() % 7; // 10 to 16        // assigns all baseAttributes to the pirates
@@ -333,29 +333,29 @@ int main() {
 
         int current_island_index;
         do {
-            current_island_index = rand() % NUMBER_OF_ISLANDS; 
+            current_island_index = rand() % NUMBER_OF_ISLANDS; //
         } while (islands[current_island_index].is_island_hostile);  // Randomly selects a non-hostile starting island
 
         mvwprintw(text_area, 2, 2, "You start on the island of %s.", islands[current_island_index].name);
         mvwprintw(text_area, 3, 2, "Description: %s", islands[current_island_index].description);
         mvwprintw(text_area, 4, 2, "Press any key to continue:");
         wrefresh(text_area);
-        getch();
+        getch(); // stops everything from happening until you press something
 
         Ship myShip;
         myShip.health = 100;
         myShip.distance = 0;
         myShip.is_at_sea = false;
 
-        int number_of_alive_pirates = NUMBER_OF_PIRATES;
+        int number_of_alive_pirates = NUMBER_OF_PIRATES;        // needs a define of 9 pirates at top
 
-        int continue_from_while = 1;
-        int port_choice;
-        int distrance_traveled;
+        int continue_from_while = 1;        // breaks out of the while loop the right way
+        int port_choice;                    // user input
+        int distrance_traveled;             //
 
         int hostile_port_choice;
 
-        // Commented so compiler can stop bitching
+        // Commented so compiler can stop bitching, facts
         // bool has_treasure_map = false;
 
         while (1) {
@@ -366,9 +366,9 @@ int main() {
             mvwprintw(text_area, 5, 2, "3: Hard");
             wrefresh(text_area);
 
-            int ch = wgetch(text_area);
+            int ch = wgetch(text_area);     // ncruse only accepts strings, workaround for input
 
-            if (ch != ERR) {
+            if (ch != ERR) {                // ERR is built in
                 difficulty_choice = ch - '0';  // Convert ASCII to integer
 
                 if (difficulty_choice == 1) {
@@ -395,16 +395,16 @@ int main() {
                     myShip.rum = 10;
                     loot_factor_forgiveness = 0.1;
                     break;
-                } else {
+                } else {                        // input validation
                     mvwprintw(text_area, 24, 2, "Enter an interger between 1 and 3.");
                     wrefresh(text_area);
                 }
             }   
         }
 
-        clearAndRedraw(text_area, "t");
+        clearAndRedraw(text_area, "t");     // clear and redraw for every note print
 
-        for (int i = 0; i < NUMBER_OF_PIRATES; i++) {
+        for (int i = 0; i < NUMBER_OF_PIRATES; i++) {       // giving the pirates names 4+
             char pirate_name[MAX_PIRATE_NAME_LENGTH];
 
             while (1) {
@@ -426,7 +426,7 @@ int main() {
 
         clearAndRedraw(text_area, "t");
 
-        // Gives pirates there base shit
+        // Gives pirates there base shit 4x
         for (int i = 0; i < number_of_alive_pirates; i++) {
             Attributes baseAttributes = getBasePirateAttributes(difficulty);
             myShip.crew[i].attributes = baseAttributes;

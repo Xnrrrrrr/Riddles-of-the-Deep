@@ -538,14 +538,14 @@ int main() {
                                     float rum_loot_factor = getRandomFloat();  // Random factor between 0 and 1
                                     float rum_max_loot = MAX_LOOT * rum_loot_factor;
 
-                                    // calculateLoot accepts total crew thievery as in interger, loot factor (float between 0 & 1), max loot (float), and available res at island (int).
+                                    // calculateLoot accepts total crew thievery as in interger, loot factor (float between 0 & 1), max loot (float), and available res at island (int). everything on island based on CII
                                     int treasure_loot_amount = calculateLoot(total_crew_thievery, treasure_loot_factor, treasure_max_loot, islands[current_island_index].treasure_available);
                                     int food_loot_amount = calculateLoot(total_crew_thievery, food_loot_factor, food_max_loot, islands[current_island_index].food_available);
                                     int cannonball_loot_amount = calculateLoot(total_crew_thievery, cannonball_loot_factor, cannonball_max_loot, islands[current_island_index].cannonballs_available);
                                     int rum_loot_amount = calculateLoot(total_crew_thievery, rum_loot_factor, rum_max_loot, islands[current_island_index].rum_available);
 
                                     // Apply the loot to the island
-                                    islands[current_island_index].treasure_available -= treasure_loot_amount;
+                                    islands[current_island_index].treasure_available -= treasure_loot_amount;       // decrementing (-=), simulates loot being taken from island, if prevents negative
                                     if (islands[current_island_index].treasure_available < 0) {
                                         islands[current_island_index].treasure_available = 0;
                                     }
@@ -573,9 +573,9 @@ int main() {
                                     // Need to render this into the stats area (I assume that is where the ship health will be)
 
 
-                                    // Calculate if mates get injured in the process maybe 20% chance per mate?
-                                    for (int i = 0; i < number_of_alive_pirates; i++) {
-                                        float damage_chance = getRandomFloat();
+                                    // Calculate if mates get injured in the process of looting the island maybe 20% chance per mate?
+                                    for (int i = 0; i < number_of_alive_pirates; i++) {     //
+                                        float damage_chance = getRandomFloat(); // number between 0 and 1
                                         int damage_taken = 15 + rand() % 8; // 15 to 22
 
                                         clearAndRedraw(text_area, "t");
@@ -593,7 +593,7 @@ int main() {
                                                 number_of_alive_pirates--;
 
                                                 i--;
-                                            } else {
+                                            } else {                    // add else if or switch case 0.1 etc random strings
                                                 mvwprintw(text_area, 2, 2, "%s took %d damage. They now have %d health.", myShip.crew[i].name, damage_taken, myShip.crew[i].health);
                                                 wrefresh(text_area);
                                             }

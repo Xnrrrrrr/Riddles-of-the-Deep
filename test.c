@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <stdbool.h>
 #include <string.h>  // allows for strcmp (compares strings)
+#include <math.h>
 
 #include "islands.h"
 
@@ -14,6 +15,10 @@
 #define NUMBER_OF_ISLANDS 22
 #define RESTOCK_RATE 3
 #define MAX_LOOT 80
+
+// exp macros
+#define EXP_THRESHOLD 185
+#define EXP_MULTIPLIER 1.104633  // Max level is 163; Was 1.107633 (max level = 158)
 
 // ncurse macros
 #define TEXT_BORDER_X 216
@@ -78,6 +83,18 @@ typedef struct {
 
 Difficulty difficulty;      // declaring
 
+// takes the base level as an arg
+int calculateExp(int level) {
+    double xp = EXP_THRESHOLD * pow(EXP_MULTIPLIER, level);
+    return (int)xp;
+}
+
+// takes level as first arg and xp as second arg; Should be used whenever a pirate gains xp to check if they leveled an attribute
+int calculateLevel(int base_level, int xp) {
+    int level = fmax(base_level, floor(log(xp / (double)EXP_THRESHOLD) / log(EXP_MULTIPLIER)));
+    return level;
+}
+
 Attributes getBasePirateAttributes() {      // function declaration       OOP
     Attributes baseAttributes;      // creates an object named baseAttributes based on the attributes "class" instantiation creating an occurence
 
@@ -89,43 +106,116 @@ Attributes getBasePirateAttributes() {      // function declaration       OOP
     int leadership_base = 10 + rand() % 7; // 10 to 16
     int carpentry_base = 9 + rand() % 7; // 9 to 15
 
-    baseAttributes.thievery_exp = 0;
-    baseAttributes.carpentry_exp = 0;
-    baseAttributes.seamanship_exp = 0;
-    baseAttributes.medicine_exp = 0;
-    baseAttributes.instinct_exp = 0;
-    baseAttributes.leadership_exp = 0;
-    baseAttributes.carpentry_exp = 0;
+    int thievery_exp, charisma_exp, seamanship_exp, medicine_exp, instinct_exp, leadership_exp, carpentry_exp;
+
+    int normal_thievery = thievery_base / 2;
+    int normal_charisma = charisma_base / 2;
+    int normal_seamanship = seamanship_base / 2;
+    int normal_medicine = medicine_base / 2;
+    int normal_instinct = instinct_base / 2;
+    int normal_leadership = leadership_base / 2;
+    int normal_carpentry = carpentry_base / 2;
+
+    int hard_thievery = thievery_base / 3;
+    int hard_charisma = charisma_base / 3;
+    int hard_seamanship = seamanship_base / 3;
+    int hard_medicine = medicine_base / 3;
+    int hard_instinct = instinct_base / 3;
+    int hard_leadership = leadership_base / 3;
+    int hard_carpentry = carpentry_base / 3;
 
     switch (difficulty) {                               // switch case based on diff, that divides base attributes
         case EASY:
+            thievery_exp = calculateExp(thievery_base);
+            charisma_exp = calculateExp(charisma_base);
+            seamanship_exp = calculateExp(seamanship_base);
+            medicine_exp = calculateExp(medicine_base);
+            instinct_exp = calculateExp(instinct_base);
+            leadership_exp = calculateExp(leadership_base);
+            carpentry_exp = calculateExp(carpentry_base);
+
             baseAttributes.thievery = thievery_base;
+            baseAttributes.thievery_exp = thievery_exp;
+
             baseAttributes.charisma = charisma_base;
+            baseAttributes.charisma_exp = charisma_exp;
+
             baseAttributes.seamanship = seamanship_base;
+            baseAttributes.seamanship_exp = seamanship_exp;
+
             baseAttributes.medicine = medicine_base;
+            baseAttributes.medicine_exp = medicine_exp;
+
             baseAttributes.instinct = instinct_base;
+            baseAttributes.instinct_exp = instinct_exp;
+
             baseAttributes.leadership = leadership_base;
+            baseAttributes.leadership_exp = leadership_exp;
+
             baseAttributes.carpentry = carpentry_base;
+            baseAttributes.carpentry_exp = carpentry_exp;
             break;
 
         case NORMAL:
-            baseAttributes.thievery = thievery_base / 2;
-            baseAttributes.charisma = charisma_base / 2;
-            baseAttributes.seamanship = seamanship_base / 2;
-            baseAttributes.medicine = medicine_base / 2;
-            baseAttributes.instinct = instinct_base / 2;
-            baseAttributes.leadership = leadership_base / 2;
-            baseAttributes.carpentry = carpentry_base / 2;
+            thievery_exp = calculateExp(normal_thievery);
+            charisma_exp = calculateExp(normal_charisma);
+            seamanship_exp = calculateExp(normal_seamanship);
+            medicine_exp = calculateExp(normal_medicine);
+            instinct_exp = calculateExp(normal_instinct);
+            leadership_exp = calculateExp(normal_leadership);
+            carpentry_exp = calculateExp(normal_carpentry);
+
+            baseAttributes.thievery = normal_thievery;
+            baseAttributes.thievery_exp = thievery_exp;
+
+            baseAttributes.charisma = normal_charisma;
+            baseAttributes.charisma_exp = charisma_exp;
+
+            baseAttributes.seamanship = normal_seamanship;
+            baseAttributes.seamanship_exp = seamanship_exp;
+
+            baseAttributes.medicine = normal_medicine;
+            baseAttributes.medicine_exp = medicine_exp;
+
+            baseAttributes.instinct = normal_instinct;
+            baseAttributes.instinct_exp = instinct_exp;
+
+            baseAttributes.leadership = normal_leadership;
+            baseAttributes.leadership_exp = leadership_exp;
+
+            baseAttributes.carpentry = normal_carpentry;
+            baseAttributes.carpentry_exp = carpentry_exp;
             break;
 
         case HARD:
-            baseAttributes.thievery = thievery_base / 3;
-            baseAttributes.charisma = charisma_base / 3;
-            baseAttributes.seamanship = seamanship_base / 3;
-            baseAttributes.medicine = medicine_base / 3;
-            baseAttributes.instinct = instinct_base / 3;
-            baseAttributes.leadership = leadership_base / 3;
-            baseAttributes.carpentry = carpentry_base / 3;
+            thievery_exp = calculateExp(hard_thievery);
+            charisma_exp = calculateExp(hard_charisma);
+            seamanship_exp = calculateExp(hard_seamanship);
+            medicine_exp = calculateExp(hard_medicine);
+            instinct_exp = calculateExp(hard_instinct);
+            leadership_exp = calculateExp(hard_leadership);
+            carpentry_exp = calculateExp(hard_carpentry);
+
+            baseAttributes.thievery = hard_thievery;
+            baseAttributes.thievery_exp = thievery_exp;
+
+            baseAttributes.charisma = hard_charisma;
+            baseAttributes.charisma_exp = charisma_exp;
+
+            baseAttributes.seamanship = hard_seamanship;
+            baseAttributes.seamanship_exp = seamanship_exp;
+
+            baseAttributes.medicine = hard_medicine;
+            baseAttributes.medicine_exp = medicine_exp;
+
+            baseAttributes.instinct = hard_instinct;
+            baseAttributes.instinct_exp = instinct_exp;
+
+            baseAttributes.leadership = hard_leadership;
+            baseAttributes.leadership_exp = leadership_exp;
+
+            baseAttributes.carpentry = hard_carpentry;
+            baseAttributes.carpentry_exp = carpentry_exp;
             break;
     }
 
@@ -257,6 +347,13 @@ int clearAndRedraw(WINDOW *window, const char *identifier){ // "const char *" is
     return 0;
 }
 
+// Well... waits for user input
+void waitForInput() {
+    noecho();  // Turn off echoing
+    getch();   // Wait for user input without displaying it
+    echo();    // Turn echoing back on
+}
+
 // accepts attribute_area, myShip, and number_of_alive_pirates to calculate the position within the attribute area
 void renderPirateAttributes(WINDOW *attribute_area, Ship myShip, int number_of_alive_pirates) {
     clearAndRedraw(attribute_area, "a");
@@ -340,7 +437,8 @@ int main() {
         mvwprintw(text_area, 3, 2, "Description: %s", islands[current_island_index].description);
         mvwprintw(text_area, 4, 2, "Press any key to continue:");
         wrefresh(text_area);
-        getch(); // stops everything from happening until you press something
+
+        waitForInput();
 
         Ship myShip;
         myShip.health = 100;
@@ -428,13 +526,31 @@ int main() {
 
         // Gives pirates there base shit 4x
         for (int i = 0; i < number_of_alive_pirates; i++) {
-            Attributes baseAttributes = getBasePirateAttributes(difficulty);
+            Attributes baseAttributes = getBasePirateAttributes();
             myShip.crew[i].attributes = baseAttributes;
             myShip.crew[i].health = 100;
             myShip.crew[i].morale = 100;
         }
 
         renderPirateAttributes(attribute_area, myShip, number_of_alive_pirates);
+
+        // while (1) {
+        //     mvwprintw(text_area, 2, 2, "%s's Thievery EXP: %d", myShip.crew[0].name, myShip.crew[0].attributes.thievery_exp);
+        //     mvwprintw(text_area, 3, 2, "%s's Thievery EXP: %d", myShip.crew[1].name, myShip.crew[1].attributes.thievery_exp);
+        //     mvwprintw(text_area, 4, 2, "%s's Charisma EXP: %d", myShip.crew[0].name, myShip.crew[0].attributes.charisma_exp);
+        //     mvwprintw(text_area, 5, 2, "%s's Charisma EXP: %d", myShip.crew[1].name, myShip.crew[1].attributes.charisma_exp);
+        //     myShip.crew[0].attributes.thievery_exp += myShip.crew[0].attributes.thievery_exp * 0.05;
+        //     int new_level = calculateLevel(myShip.crew[0].attributes.thievery, myShip.crew[0].attributes.thievery_exp);
+
+        //     mvwprintw(text_area, 6, 2, "%s's Thievery level: %d", myShip.crew[0].name, new_level);
+        //     wrefresh(text_area);
+
+        //     myShip.crew[0].attributes.thievery = new_level;
+
+        //     renderPirateAttributes(attribute_area, myShip, number_of_alive_pirates);
+
+        //     waitForInput();
+        // }
 
         // Game loop
         while (myShip.health > 0 && number_of_alive_pirates > 0) {
@@ -498,7 +614,6 @@ int main() {
                                 clearAndRedraw(text_area, "t");
                                 mvwprintw(text_area, 2, 2, "You set sail in hopes to find some treasure!");
                                 wrefresh(text_area);
-                                sleep(1);
 
                                 distrance_traveled = 8 + rand() % 63; // 8 to 70
                                 myShip.distance += distrance_traveled;
@@ -515,14 +630,17 @@ int main() {
                                     mvwprintw(text_area, 3, 2, "You traveled %d nautical miles.", distrance_traveled);
                                     myShip.is_at_sea = true;
                                 }
+                                mvwprintw(text_area, 4, 2, "Press any key to continue...");
                                 wrefresh(text_area);
-                                sleep(1);
+
+                                waitForInput();
 
                                 clearAndRedraw(text_area, "t");
 
                                 continue_from_while = 0;
                                 break;
                             case 2:
+                                // continue_from_while = 0;
                                 break;
                             case 3:
                                 if (!islands[current_island_index].is_looted) {
@@ -572,20 +690,17 @@ int main() {
                                     myShip.rum += rum_loot_amount;
                                     // Need to render this into the stats area (I assume that is where the ship health will be)
 
+                                    clearAndRedraw(text_area, "t");
 
                                     // Calculate if mates get injured in the process of looting the island maybe 20% chance per mate?
                                     for (int i = 0; i < number_of_alive_pirates; i++) {     //
                                         float damage_chance = getRandomFloat(); // number between 0 and 1
                                         int damage_taken = 15 + rand() % 8; // 15 to 22
 
-                                        clearAndRedraw(text_area, "t");
-
                                         if (damage_chance <= 0.2) {
                                             myShip.crew[i].health -= damage_taken;
                                             if (myShip.crew[i].health <= 0) {
-                                                mvwprintw(text_area, 2, 2, "%s died while searching.", myShip.crew[i].name);
-                                                wrefresh(text_area);
-                                                
+                                                mvwprintw(text_area, i + 10, 2, "%s died while searching %s.", myShip.crew[i].name, islands[current_island_index].name);  // If two or more pirates die at the same time, one overwrites the other  
                                                 // Shift remaining pirates to fill the gap
                                                 for (int j = i; j < number_of_alive_pirates - 1; j++) {
                                                     myShip.crew[j] = myShip.crew[j + 1];
@@ -593,33 +708,73 @@ int main() {
                                                 number_of_alive_pirates--;
 
                                                 i--;
+
+                                                // leaves for loop if no more pirates are alive (or if there is somehow negative pirates)
+                                                if (number_of_alive_pirates <= 0) {
+                                                    break;
+                                                }
                                             } else {                    // add else if or switch case 0.1 etc random strings
-                                                mvwprintw(text_area, 2, 2, "%s took %d damage. They now have %d health.", myShip.crew[i].name, damage_taken, myShip.crew[i].health);
-                                                wrefresh(text_area);
+                                                mvwprintw(text_area, i + 2, 2, "%s took %d damage. They now have %d health.", myShip.crew[i].name, damage_taken, myShip.crew[i].health);
                                             }
-                                            renderPirateAttributes(attribute_area, myShip, number_of_alive_pirates);
-                                            sleep(1);
+                                        } else {
+                                            int check_for_level_up = myShip.crew[i].attributes.thievery;
+
+                                            int exp_gain = treasure_loot_amount + rand() % 30;  // May need to adjust this
+
+                                            myShip.crew[i].attributes.thievery_exp += exp_gain;
+
+                                            int new_thievery_level = calculateLevel(myShip.crew[i].attributes.thievery, myShip.crew[i].attributes.thievery_exp);
+                                            myShip.crew[i].attributes.thievery = new_thievery_level;
+
+                                            if (myShip.crew[i].attributes.thievery > check_for_level_up) {
+                                                int amount_of_levels_gained = myShip.crew[i].attributes.thievery - check_for_level_up;
+                                                if (amount_of_levels_gained == 1) {
+                                                    mvwprintw(text_area, i + 2, 2, "%s gained a level in thievery after receiving %d thievery xp. %s now has %d thievery xp.", myShip.crew[i].name, exp_gain, myShip.crew[i].name, myShip.crew[i].attributes.thievery_exp);
+                                                } else {
+                                                    mvwprintw(text_area, i + 2, 2, "%s gained %d levels in thievery after receiving %d thievery xp. %s now has %d thievery xp.", myShip.crew[i].name, amount_of_levels_gained, exp_gain, myShip.crew[i].name, myShip.crew[i].attributes.thievery_exp);
+                                                }
+                                            } else {
+                                                mvwprintw(text_area, i + 2, 2, "%s gained %d thievery xp. %s now has %d thievery xp.", myShip.crew[i].name, exp_gain, myShip.crew[i].name, myShip.crew[i].attributes.thievery_exp);
+                                            }
                                         }
+                                        if (i == number_of_alive_pirates - 1) {
+                                            renderPirateAttributes(attribute_area, myShip, number_of_alive_pirates);
+                                            mvwprintw(text_area, i + 3, 2, "Press any key to continue..."); // Will have issues if a pirate dies
+                                            wrefresh(text_area);
+                                        }   
+                                    }
+
+                                    // leaves switch case in addition to the while loop to send the user to the restart screen
+                                    if (number_of_alive_pirates == 0) {
+                                        clearAndRedraw(text_area, "t");
+                                        continue_from_while = 0;
+                                        break;
                                     }
                                     
+                                    // renderPirateAttributes(attribute_area, myShip, number_of_alive_pirates);
+                                    // mvwprintw(text_area, number_of_alive_pirates + 2, 2, "Press any key to continue..."); // Will have issues if a pirate dies
+                                    // wrefresh(text_area);
 
-                                    // mates gain xp based on loot_amount if they weren't injured
+                                    waitForInput();
                                     
                                     clearAndRedraw(text_area, "t");
+
                                     mvwprintw(text_area, 2, 2, "%d treasure gained. You now have %d treasure", treasure_loot_amount, myShip.treasure);
-                                    wrefresh(text_area);
-                                    sleep(1);
                                     mvwprintw(text_area, 3, 2, "You gained %d food, %d cannonball(s), and %d rum. You now have %d food, %d cannonball(s), and %d rum.", food_loot_amount, cannonball_loot_amount, rum_loot_amount, myShip.food, myShip.cannonballs, myShip.rum);
+                                    mvwprintw(text_area, 4, 2, "Press any key to continue...");
                                     wrefresh(text_area);
-                                    sleep(2);
+
+                                    waitForInput();
                                     // Mark the island as looted
                                     islands[current_island_index].is_looted = true;
                                     continue_from_while = 0;
                                 } else {
                                     clearAndRedraw(text_area, "t");
                                     mvwprintw(text_area, 2, 2, "%s has been looted recently.", islands[current_island_index].name);
+                                    mvwprintw(text_area, 3, 2, "Press any key to continue...");
                                     wrefresh(text_area);
-                                    sleep(1);
+
+                                    waitForInput();
                                 }
 
                                 clearAndRedraw(text_area, "t");
@@ -724,12 +879,18 @@ int main() {
         clearAndRedraw(text_area, "t");
 
         if (myShip.health <= 0) {
-            mvwprintw(text_area, (TEXT_BORDER_Y / 2), (TEXT_BORDER_X / 2), "Game over. Your ship was destroyed.");
+            int center_x = TEXT_BORDER_X / 2 - strlen("Game over. Your ship was destroyed.") / 2;
+            int center_y = TEXT_BORDER_Y / 2;
+
+            mvwprintw(text_area, center_y, center_x, "Game over. Your ship was destroyed.");
             wrefresh(text_area);
         }
 
         if (number_of_alive_pirates == 0) {
-            mvwprintw(text_area, (TEXT_BORDER_Y / 2), (TEXT_BORDER_X / 2), "Game over. All of your mates died.");
+            int center_x = TEXT_BORDER_X / 2 - strlen("Game over. All of your mates died.") / 2;
+            int center_y = TEXT_BORDER_Y / 2;
+
+            mvwprintw(text_area, center_y, center_x, "Game over. All of your mates died.");
             wrefresh(text_area);
         }
 
@@ -742,7 +903,7 @@ int main() {
 
             if (last_decision == 'y') {
                 clearAndRedraw(text_area, "t");
-                clearAndRedraw(attribute_area, "a");
+                renderPirateAttributes(attribute_area, myShip, number_of_alive_pirates);
                 clearAndRedraw(stats_area, "s");
                 clearAndRedraw(visual_area, "v");
                 break;

@@ -171,16 +171,16 @@ void initializeIslands(Island islands[], int numIslands) {          // function 
     islands[12].max_treasure = islands[12].treasure_available;
     islands[12].food_available = 2 + rand() % 5; // 2 to 6;
     islands[12].max_food = islands[12].food_available;
-    islands[12].cannonballs_available = 3 + rand() % 8; // 3 to 10
+    islands[12].cannonballs_available = 5 + rand() % 16; // 3 to 10
     islands[12].max_cannonballs = islands[12].cannonballs_available;
-    islands[12].rum_available = 4 + rand() % 7; // 4 to 10
+    islands[12].rum_available = 3 + rand() % 6; // 4 to 10
     islands[12].max_rum = islands[12].rum_available;
     islands[12].is_island_hostile = true;
     islands[12].is_looted = false;
 
     snprintf(islands[13].name, MAX_STRING_LENGTH, "Dead Man's Reef");
     snprintf(islands[13].description, MAX_STRING_LENGTH, "A mysterious and dangerous island, Ship graveyard, treacherous currents, ghostly whispers, cursed maritime history.");
-    islands[13].treasure_available = 3 + rand() % 9; // 3- 12
+    islands[13].treasure_available = 2 + rand() % 8; // 3- 12
     islands[13].max_treasure = islands[13].treasure_available;
     islands[13].food_available = 2 + rand() % 5; // 2 to 6;
     islands[13].max_food = islands[13].food_available;

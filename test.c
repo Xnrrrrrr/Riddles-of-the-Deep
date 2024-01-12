@@ -381,8 +381,20 @@ void renderPirateAttributes(WINDOW *attribute_area, Ship myShip, int number_of_a
     }
 }
 
+// Accepts the stats area, myShip, and days_passed as args
+void renderShipStats(WINDOW *stats_area, Ship myShip, int days_passed) {
+    clearAndRedraw(stats_area, "s");
+    mvwprintw(stats_area, 2, 2, "Ship Health: %d", myShip.health);
+    mvwprintw(stats_area, 2, 58, "Days passed: %d", days_passed);
+    mvwprintw(stats_area, 3, 2, "Treasure: %d", myShip.treasure);
+    mvwprintw(stats_area, 4, 2, "Food: %d", myShip.food);
+    mvwprintw(stats_area, 5, 2, "Rum: %d", myShip.rum);
+    wrefresh(stats_area);
+}
+
 // Accepts attribute area, text_area, myShip, and number of alive pirates
 void checkForDeadPirates(WINDOW *attribute_area, WINDOW *text_area, Ship myShip, int number_of_alive_pirates) {
+    clearAndRedraw(text_area, "t");
     for (int i = 0; i < number_of_alive_pirates; i++) {
         if (myShip.crew[i].health <= 0) {
             mvwprintw(text_area, 2, 2, "Your crewmate %s died!", myShip.crew[i].name);
@@ -478,6 +490,8 @@ int main() {
         // Commented so compiler can stop bitching, facts
         // bool has_treasure_map = false;
 
+        int days_passed = 0;
+
         while (1) {
             clearAndRedraw(text_area, "t");
             mvwprintw(text_area, 2, 2, "Enter a difficulty level: ");
@@ -555,6 +569,9 @@ int main() {
         }
 
         renderPirateAttributes(attribute_area, myShip, number_of_alive_pirates);
+
+        // Display stats
+        renderShipStats(stats_area, myShip, days_passed);
 
         // while (1) {
         //     mvwprintw(text_area, 2, 2, "%s's Thievery EXP: %d", myShip.crew[0].name, myShip.crew[0].attributes.thievery_exp);
@@ -668,28 +685,48 @@ int main() {
                                 int rum_consumption = number_of_alive_pirates + rand() % (number_of_alive_pirates + 1);  // number of alive pirates to number of alive pirate; 4 to 8 is default
                                 int pirate_fatigue = 0; // How much damage a pirate should take based on existing resource storage
                                 float awol_chance; // Random float between 0 and 1 
+
+                                int prev_food = myShip.food;
+                                int prev_rum = myShip.rum;
                                 
                                 // Consumes food and rum; regenerates crews health; Make sure food or rum does not go to zero
 
                                 myShip.food -= food_consumption;
-                                myShip.rum -= rum_consumption; // Display this trash somewhere
+                                myShip.rum -= rum_consumption; 
 
                                 // Makes sure rum and food does not reach zero and distributes punishment 
                                 if (myShip.food < 0 && myShip.rum < 0) {
-                                    pirate_fatigue = abs(myShip.food) + food_consumption + abs(myShip.rum) + rum_consumption;
+                                    pirate_fatigue = abs(myShip.food) + (food_consumption - prev_food) + abs(myShip.rum) + (rum_consumption - prev_rum);
                                     awol_chance += 0.05;
+                                    mvwprintw(text_area, 2, 2, "You sent your crew off to rest without enough food and rum.");
                                     myShip.food = 0;
                                     myShip.rum = 0;
-                                } else if (myShip.food < 0 && myShip.rum >= 0) {
+                                } else if (myShip.food < 0 && myShip.rum >= 0) { // Crashes program
                                     pirate_fatigue = abs(myShip.food) + food_consumption - rum_consumption;
+                                    mvwprintw(text_area, 2, 2, "You sent your crew off to rest without enough food, so they relied on their rum for the night. Your crew consumed %d rum and you now have %d rum.", rum_consumption, myShip.rum);
                                     awol_chance += 0.025;
                                     myShip.food = 0;
-                                } else if (myShip.rum < 0 && myShip.food >= 0) {
+                                } else if (myShip.rum < 0 && myShip.food >= 0) { // Crashes program; does not?
                                     pirate_fatigue = abs(myShip.rum) + rum_consumption - food_consumption;
+                                    mvwprintw(text_area, 2, 2, "You sent your crew off to rest without enough rum, so they relied on their food for the night. Your crew consumed %d food and you now have %d food.", food_consumption, myShip.food);
                                     awol_chance += 0.025;
-                                    myShip.rum = 0;
+                                    myShip.rum = 0; 
+                                } else {
+                                    mvwprintw(text_area, 2, 2, "Your crew consumes %d food and %d rum over the night. You now have %d food and %d rum.", food_consumption, rum_consumption, myShip.food, myShip.rum);
                                 }
+                                mvwprintw(text_area, 3, 2, "Press any key to continue...");
                                 wrefresh(text_area);
+
+                                renderShipStats(stats_area, myShip, days_passed);
+
+                                waitForInput();
+
+                                clearAndRedraw(text_area, "t");
+
+                                // Makes sure pirate_fatigue is not less than 0
+                                if (pirate_fatigue < 0) {
+                                    pirate_fatigue = 0;
+                                }
 
                                 // Decides wheather pirates should get healed or taken damage, but damage will be slightly more forgiving
                                 for (int i = 0; i < number_of_alive_pirates; i++) {
@@ -710,7 +747,7 @@ int main() {
                                             // Gain xp in a stat?
                                         }
                                     } else {
-                                        int damage_on_pirate = 5 + rand() % (pirate_fatigue / number_of_alive_pirates);  // 5 to ... (may need to adjust max)
+                                        int damage_on_pirate = 5 + rand() % pirate_fatigue;  // 5 to ... (may need to adjust max) NEED TO ADJUST was pirate_fatigue/number_of_alive_pirates but when there are four alive pirates and a fatigue of 1, it crashes because can't divide by zero
                                         myShip.crew[i].health -= damage_on_pirate;
                                         if (myShip.crew[i].health <= 0) {
                                             mvwprintw(text_area, i + 2, 2, "%s died of starvation or thirst.", myShip.crew[i].name);
@@ -723,11 +760,6 @@ int main() {
                                         mvwprintw(text_area, i + 3, 2, "Press any key to continue...");
                                         wrefresh(text_area);
                                     }
-                                }
-                                if (number_of_alive_pirates == 0) {
-                                    clearAndRedraw(text_area, "t");
-                                    continue_from_while = 0;
-                                    break;
                                 }
 
                                 waitForInput();
@@ -805,20 +837,8 @@ int main() {
                                         if (damage_chance <= 0.2) {
                                             myShip.crew[i].health -= damage_taken;
                                             if (myShip.crew[i].health <= 0) {
-                                                mvwprintw(text_area, i + 10, 2, "%s died while searching %s.", myShip.crew[i].name, islands[current_island_index].name);  // If two or more pirates die at the same time, one overwrites the other  
-                                                // Shift remaining pirates to fill the gap
-                                                for (int j = i; j < number_of_alive_pirates - 1; j++) {
-                                                    myShip.crew[j] = myShip.crew[j + 1];
-                                                }
-                                                number_of_alive_pirates--;
-
-                                                i--;   // !!!!!!!!!!!!!!!!!! Make this a function and handle after for loop
-
-                                                // leaves for loop if no more pirates are alive (or if there is somehow negative pirates)
-                                                if (number_of_alive_pirates <= 0) {
-                                                    break;
-                                                }
-                                            } else {                    // add else if or switch case 0.1 etc random strings
+                                                mvwprintw(text_area, i + 2, 2, "%s died while searching %s.", myShip.crew[i].name, islands[current_island_index].name); 
+                                            } else {
                                                 mvwprintw(text_area, i + 2, 2, "%s took %d damage. They now have %d health.", myShip.crew[i].name, damage_taken, myShip.crew[i].health);
                                             }
                                         } else {
@@ -845,31 +865,26 @@ int main() {
                                         if (i == number_of_alive_pirates - 1) {
                                             renderPirateAttributes(attribute_area, myShip, number_of_alive_pirates);
                                             mvwprintw(text_area, i + 3, 2, "Press any key to continue...");
-                                            wrefresh(text_area);
                                         }   
                                     }
-
-                                    // leaves switch case in addition to the while loop to send the user to the restart screen
-                                    if (number_of_alive_pirates == 0) {
-                                        clearAndRedraw(text_area, "t");
-                                        continue_from_while = 0;
-                                        break;
-                                    }
-                                    
-                                    // renderPirateAttributes(attribute_area, myShip, number_of_alive_pirates);
-                                    // mvwprintw(text_area, number_of_alive_pirates + 2, 2, "Press any key to continue..."); // Will have issues if a pirate dies
-                                    // wrefresh(text_area);
+                                    wrefresh(text_area);
 
                                     waitForInput();
                                     
                                     clearAndRedraw(text_area, "t");
 
-                                    mvwprintw(text_area, 2, 2, "%d treasure gained. You now have %d treasure", treasure_loot_amount, myShip.treasure);
-                                    mvwprintw(text_area, 3, 2, "You gained %d food, %d cannonball(s), and %d rum. You now have %d food, %d cannonball(s), and %d rum.", food_loot_amount, cannonball_loot_amount, rum_loot_amount, myShip.food, myShip.cannonballs, myShip.rum);
-                                    mvwprintw(text_area, 4, 2, "Press any key to continue...");
-                                    wrefresh(text_area);
+                                    checkForDeadPirates(attribute_area, text_area, myShip, number_of_alive_pirates);
 
-                                    waitForInput();
+                                    // leaves switch case in addition to the while loop to send the user to the restart screen
+                                    if (number_of_alive_pirates != 0) {
+                                        mvwprintw(text_area, 2, 2, "%d treasure gained. You now have %d treasure", treasure_loot_amount, myShip.treasure);
+                                        mvwprintw(text_area, 3, 2, "You gained %d food, %d cannonball(s), and %d rum. You now have %d food, %d cannonball(s), and %d rum.", food_loot_amount, cannonball_loot_amount, rum_loot_amount, myShip.food, myShip.cannonballs, myShip.rum);
+                                        mvwprintw(text_area, 4, 2, "Press any key to continue...");
+                                        wrefresh(text_area);
+
+                                        waitForInput();
+                                    }
+
                                     // Mark the island as looted
                                     islands[current_island_index].is_looted = true;
                                     continue_from_while = 0;
@@ -977,6 +992,9 @@ int main() {
                     }
                 }
             }
+
+            days_passed += 1;
+            renderShipStats(stats_area, myShip, days_passed);
 
             //usleep(100000);  // Sleep for 0.1 seconds (100,000 microseconds)
         }

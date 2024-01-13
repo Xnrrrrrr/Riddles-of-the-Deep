@@ -9,7 +9,7 @@ void initializeIslands(Island islands[], int numIslands) {          // function 
     snprintf(islands[0].description, MAX_STRING_LENGTH, "A lively pirate haven. Starting isle.");
     islands[0].treasure_available = 4 + rand() % 6; // 4 is lowest, 6 subtracted by 1 + add 4 together will be highest 4-9 CHECK
     islands[0].max_treasure = islands[0].treasure_available;
-    islands[0].food_available = 2 + rand() % 5; // 2 to 6
+    islands[0].food_available = 3 + rand() % 5; // 3 to 7 CHECK
     islands[0].max_food = islands[0].food_available;
     islands[0].cannonballs_available = 3 + rand() % 5; // 3 to 7
     islands[0].max_cannonballs = islands[0].cannonballs_available;
@@ -22,7 +22,7 @@ void initializeIslands(Island islands[], int numIslands) {          // function 
     snprintf(islands[1].description, MAX_STRING_LENGTH, "Known for its vibrant red coral reefs");
     islands[1].treasure_available = 3 + rand() % 7; // 3 - 9 CHECK
     islands[1].max_treasure = islands[1].treasure_available;
-    islands[1].food_available = 2 + rand() % 7; // 2 to 8;
+    islands[1].food_available = 4 + rand() % 6; // 4 to 9 CHECK
     islands[1].max_food = islands[1].food_available;
     islands[1].cannonballs_available = 3 + rand() % 7; // 3 to 9
     islands[1].max_cannonballs = islands[1].cannonballs_available;
@@ -35,7 +35,7 @@ void initializeIslands(Island islands[], int numIslands) {          // function 
     snprintf(islands[2].description, MAX_STRING_LENGTH, "A place where pirates reside.");
     islands[2].treasure_available = 4 + rand() % 4; // 4 to 7 CHECK
     islands[2].max_treasure = islands[2].treasure_available;
-    islands[2].food_available = 2 + rand() % 3; // 2 to 4
+    islands[2].food_available = 2 + rand() % 3; // 2 to 4 CHECK
     islands[2].max_food = islands[2].food_available;
     islands[2].cannonballs_available = 3 + rand() % 5; // 3 to 7
     islands[2].max_cannonballs = islands[2].cannonballs_available;
@@ -48,7 +48,7 @@ void initializeIslands(Island islands[], int numIslands) {          // function 
     snprintf(islands[3].description, MAX_STRING_LENGTH, "Rumored to have mystical emerald artifacts");
     islands[3].treasure_available = 2 + rand() % 11; // 2-12 because it has emeralds CHECK
     islands[3].max_treasure = islands[3].treasure_available;
-    islands[3].food_available = 2 + rand() % 5; // 2 to 6; counter because it has more treasure
+    islands[3].food_available = 2 + rand() % 5; // 2 to 6; counter because it has more treasure CHECK
     islands[3].max_food = islands[3].food_available;
     islands[3].cannonballs_available = 3 + rand() % 8; // 3 to 10
     islands[3].max_cannonballs = islands[3].cannonballs_available;
@@ -61,7 +61,7 @@ void initializeIslands(Island islands[], int numIslands) {          // function 
     snprintf(islands[4].description, MAX_STRING_LENGTH, "Once the sight of a legendary gold rush");
     islands[4].treasure_available = 5 + rand() % 4; // 5 to 8 CHECK
     islands[4].max_treasure = islands[4].treasure_available;
-    islands[4].food_available = 4 + rand() % 9; // 4 to 11;
+    islands[4].food_available = 4 + rand() % 9; // 4 to 11; CHECK
     islands[4].max_food = islands[4].food_available;
     islands[4].cannonballs_available = 3 + rand() % 8; // 3 to 10
     islands[4].max_cannonballs = islands[4].cannonballs_available;
@@ -74,7 +74,7 @@ void initializeIslands(Island islands[], int numIslands) {          // function 
     snprintf(islands[5].description, MAX_STRING_LENGTH, "Desert Island with secrets carried by the wind");
     islands[5].treasure_available = 4 + rand() % 3; // 4 to 6 CHECK
     islands[5].max_treasure = islands[5].treasure_available;
-    islands[5].food_available = 2 + rand() % 5; // 2 to 6;
+    islands[5].food_available = 3 + rand() % 4; // 3 to 6 CHECK
     islands[5].max_food = islands[5].food_available;
     islands[5].cannonballs_available = 3 + rand() % 8; // 3 to 10
     islands[5].max_cannonballs = islands[5].cannonballs_available;
@@ -87,7 +87,7 @@ void initializeIslands(Island islands[], int numIslands) {          // function 
     snprintf(islands[6].description, MAX_STRING_LENGTH, "Enclave for Pirates of the highest status");
     islands[6].treasure_available = 5 + rand() % 6; // 5 to 10 CHECK
     islands[6].max_treasure = islands[6].treasure_available;
-    islands[6].food_available = 2 + rand() % 5; // 2 to 6;
+    islands[6].food_available = 2 + rand() % 7; // 2 to 8 CHECK
     islands[6].max_food = islands[6].food_available;
     islands[6].cannonballs_available = 3 + rand() % 8; // 3 to 10
     islands[6].max_cannonballs = islands[6].cannonballs_available;
@@ -100,7 +100,7 @@ void initializeIslands(Island islands[], int numIslands) {          // function 
     snprintf(islands[7].description, MAX_STRING_LENGTH, "Shrouded in mystery under the moonlight");
     islands[7].treasure_available = 2 + rand() % 2; // 2 to 3 CHECK
     islands[7].max_treasure = islands[7].treasure_available;
-    islands[7].food_available = 2 + rand() % 5; // 2 to 6;
+    islands[7].food_available = 4 + rand() % 4; // 4 to 7 CHECK
     islands[7].max_food = islands[7].food_available;
     islands[7].cannonballs_available = 3 + rand() % 8; // 3 to 10
     islands[7].max_cannonballs = islands[7].cannonballs_available;
@@ -113,7 +113,7 @@ void initializeIslands(Island islands[], int numIslands) {          // function 
     snprintf(islands[8].description, MAX_STRING_LENGTH, "Freedom port, pirate democracy, vibrant nightlife, notorious captains thrive");
     islands[8].treasure_available = 3 + rand() % 3; // 3 to 5 CHECK
     islands[8].max_treasure = islands[8].treasure_available;
-    islands[8].food_available = 2 + rand() % 5; // 2 to 6;
+    islands[8].food_available = 5 + rand() % 4; // 5 to 8 CHECK
     islands[8].max_food = islands[8].food_available;
     islands[8].cannonballs_available = 3 + rand() % 8; // 3 to 10
     islands[8].max_cannonballs = islands[8].cannonballs_available;
@@ -126,7 +126,7 @@ void initializeIslands(Island islands[], int numIslands) {          // function 
     snprintf(islands[9].description, MAX_STRING_LENGTH, "Sanctuary for outcasts, camaraderie, shared spoils, legendary pirate lore");
     islands[9].treasure_available = 2 + rand() % 2; // 2 to 3 CHECK
     islands[9].max_treasure = islands[9].treasure_available;
-    islands[9].food_available = 2 + rand() % 5; // 2 to 6;
+    islands[9].food_available = 5 + rand() % 3; // 5 to 7 CHECK
     islands[9].max_food = islands[9].food_available;
     islands[9].cannonballs_available = 3 + rand() % 8; // 3 to 10
     islands[9].max_cannonballs = islands[9].cannonballs_available;
@@ -139,7 +139,7 @@ void initializeIslands(Island islands[], int numIslands) {          // function 
     snprintf(islands[10].description, MAX_STRING_LENGTH, "Opulent haven, lavish lifestyles, treacherous alliances, high-stakes intrigues unfold.");
     islands[10].treasure_available = 2 + rand() % 3; // 2 to 4 CHECK
     islands[10].max_treasure = islands[10].treasure_available;
-    islands[10].food_available = 2 + rand() % 5; // 2 to 6;
+    islands[10].food_available = 2 + rand() % 7; // 2 to 8 CHECK
     islands[10].max_food = islands[10].food_available;
     islands[10].cannonballs_available = 3 + rand() % 8; // 3 to 10
     islands[10].max_cannonballs = islands[10].cannonballs_available;
@@ -295,3 +295,16 @@ void initializeIslands(Island islands[], int numIslands) {          // function 
     islands[21].is_island_hostile = true;
     islands[21].is_looted = false;
 }
+
+
+// non-hostile -
+// less chance and range of treasure,
+// greater chance and range of food
+// less chance and range of booze
+// greater chance of cannonballs availabale
+
+
+// hostile -    i want shit u can only acquire on hostile islands, need a notes file also, save system, possibly designate certain hostile islands as strongholds which have greater chance of cannonballs
+// greater chance and range of treasure,
+// less chance and range of food
+//

@@ -12,6 +12,7 @@
 #define MAX_PIRATE_NAME_LENGTH 8
 #define MAX_STRING_LENGTH 100
 #define NUMBER_OF_PIRATES 4
+#define MAX_NUMBER_OF_PIRATES 9
 #define NUMBER_OF_ISLANDS 22
 #define RESTOCK_RATE 3
 #define MAX_LOOT 80
@@ -392,27 +393,32 @@ void renderShipStats(WINDOW *stats_area, Ship myShip, int days_passed) {
     wrefresh(stats_area);
 }
 
-// Accepts attribute area, text_area, myShip, and number of alive pirates
-void checkForDeadPirates(WINDOW *attribute_area, WINDOW *text_area, Ship myShip, int number_of_alive_pirates) {
+// Accepts attribute area, text_area, myShip, and &number_of_alive_pirates
+void checkForDeadPirates(WINDOW *attribute_area, WINDOW *text_area, Ship myShip, int *number_of_alive_pirates) {
     clearAndRedraw(text_area, "t");
-    for (int i = 0; i < number_of_alive_pirates; i++) {
+    for (int i = 0; i < *number_of_alive_pirates; i++) {
         if (myShip.crew[i].health <= 0) {
             mvwprintw(text_area, 2, 2, "Your crewmate %s died!", myShip.crew[i].name);
             wrefresh(text_area);
             // Shift remaining pirates to fill the gap
-            for (int j = i; j < number_of_alive_pirates - 1; j++) {
+            for (int j = i; j < *number_of_alive_pirates - 1; j++) {
                 myShip.crew[j] = myShip.crew[j + 1];
             }
-            number_of_alive_pirates--;
+            (*number_of_alive_pirates)--;
 
             i--;
-            renderPirateAttributes(attribute_area, myShip, number_of_alive_pirates);
+            renderPirateAttributes(attribute_area, myShip, *number_of_alive_pirates);
 
             waitForInput();
 
             clearAndRedraw(text_area, "t");
         }
     }
+}
+
+// Accepts attribute_area, myShip, 
+void addPirateToCrew(WINDOW *attribute_area, Ship myShip) {
+
 }
 
 int main() {
@@ -684,7 +690,8 @@ int main() {
                                 int food_consumption = number_of_alive_pirates + rand() % (number_of_alive_pirates + 1);  // number of alive pirates to number of alive pirate; 4 to 8 is default
                                 int rum_consumption = number_of_alive_pirates + rand() % (number_of_alive_pirates + 1);  // number of alive pirates to number of alive pirate; 4 to 8 is default
                                 int pirate_fatigue = 0; // How much damage a pirate should take based on existing resource storage
-                                float awol_chance; // Random float between 0 and 1 
+                                float awol_chance = 0; // Random float between 0 and 1
+                                float increased_awol_chance = 0; // could include moral into this chance, but would have to handle this differently
 
                                 int prev_food = myShip.food;
                                 int prev_rum = myShip.rum;
@@ -697,19 +704,19 @@ int main() {
                                 // Makes sure rum and food does not reach zero and distributes punishment 
                                 if (myShip.food < 0 && myShip.rum < 0) {
                                     pirate_fatigue = abs(myShip.food) + (food_consumption - prev_food) + abs(myShip.rum) + (rum_consumption - prev_rum);
-                                    awol_chance += 0.05;
+                                    increased_awol_chance += 0.08;
                                     mvwprintw(text_area, 2, 2, "You sent your crew off to rest without enough food and rum.");
                                     myShip.food = 0;
                                     myShip.rum = 0;
-                                } else if (myShip.food < 0 && myShip.rum >= 0) { // Crashes program
+                                } else if (myShip.food < 0 && myShip.rum >= 0) {
                                     pirate_fatigue = abs(myShip.food) + food_consumption - rum_consumption;
                                     mvwprintw(text_area, 2, 2, "You sent your crew off to rest without enough food, so they relied on their rum for the night. Your crew consumed %d rum and you now have %d rum.", rum_consumption, myShip.rum);
-                                    awol_chance += 0.025;
+                                    increased_awol_chance += 0.03;
                                     myShip.food = 0;
-                                } else if (myShip.rum < 0 && myShip.food >= 0) { // Crashes program; does not?
+                                } else if (myShip.rum < 0 && myShip.food >= 0) {
                                     pirate_fatigue = abs(myShip.rum) + rum_consumption - food_consumption;
                                     mvwprintw(text_area, 2, 2, "You sent your crew off to rest without enough rum, so they relied on their food for the night. Your crew consumed %d food and you now have %d food.", food_consumption, myShip.food);
-                                    awol_chance += 0.025;
+                                    increased_awol_chance += 0.03;
                                     myShip.rum = 0; 
                                 } else {
                                     mvwprintw(text_area, 2, 2, "Your crew consumes %d food and %d rum over the night. You now have %d food and %d rum.", food_consumption, rum_consumption, myShip.food, myShip.rum);
@@ -724,7 +731,7 @@ int main() {
                                 clearAndRedraw(text_area, "t");
 
                                 // Makes sure pirate_fatigue is not less than 0
-                                if (pirate_fatigue < 0) {
+                                if (pirate_fatigue < 0 || pirate_fatigue / number_of_alive_pirates < 1) {
                                     pirate_fatigue = 0;
                                 }
 
@@ -747,12 +754,13 @@ int main() {
                                             // Gain xp in a stat?
                                         }
                                     } else {
-                                        int damage_on_pirate = 5 + rand() % pirate_fatigue;  // 5 to ... (may need to adjust max) NEED TO ADJUST was pirate_fatigue/number_of_alive_pirates but when there are four alive pirates and a fatigue of 1, it crashes because can't divide by zero
+                                        int calculate_pirate_damage = (pirate_fatigue / number_of_alive_pirates) + 4;
+                                        int damage_on_pirate = 5 + rand() % calculate_pirate_damage;  // 5 to ... (may need to adjust max)
                                         myShip.crew[i].health -= damage_on_pirate;
                                         if (myShip.crew[i].health <= 0) {
                                             mvwprintw(text_area, i + 2, 2, "%s died of starvation or thirst.", myShip.crew[i].name);
                                         } else {
-                                            mvwprintw(text_area, i + 2, 2, "%s is starving and lost %d health as a result.", myShip.crew[i].name, damage_on_pirate);
+                                            mvwprintw(text_area, i + 2, 2, "%s is starving and thirsty and lost %d health as a result.", myShip.crew[i].name, damage_on_pirate);
                                         }
                                     }
                                     if (i == number_of_alive_pirates - 1) {
@@ -767,13 +775,31 @@ int main() {
                                 clearAndRedraw(text_area, "t");
 
                                 // Handle death
-                                checkForDeadPirates(attribute_area, text_area, myShip, number_of_alive_pirates);
+                                checkForDeadPirates(attribute_area, text_area, myShip, &number_of_alive_pirates);
 
                                 // Chance for a mate to go awol
                                 for (int i = 0; i < number_of_alive_pirates; i++) {
+                                    awol_chance = increased_awol_chance;
                                     awol_chance += getRandomFloat();
-                                    if (myShip.crew[i].health > 0) {
-                                        
+                                    if (myShip.crew[i].health > 0 && awol_chance >= 0.995) { // 0.5% chance per pirate to go awol; increased with increased awol chance
+                                        mvwprintw(text_area, 2, 2, "You find out that %s left your crew over the night.", myShip.crew[i].name);
+
+                                        for (int j = i; j < number_of_alive_pirates - 1; j++) {
+                                            myShip.crew[j] = myShip.crew[j + 1];
+                                        }
+
+                                        number_of_alive_pirates--;
+
+                                        i--;
+
+                                        renderPirateAttributes(attribute_area, myShip, number_of_alive_pirates);
+
+                                        mvwprintw(text_area, 3, 2, "Press any key to continue...");
+                                        wrefresh(text_area);
+
+                                        waitForInput();
+
+                                        clearAndRedraw(text_area, "t");
                                     }
                                 }
 
@@ -873,7 +899,7 @@ int main() {
                                     
                                     clearAndRedraw(text_area, "t");
 
-                                    checkForDeadPirates(attribute_area, text_area, myShip, number_of_alive_pirates);
+                                    checkForDeadPirates(attribute_area, text_area, myShip, &number_of_alive_pirates);
 
                                     // leaves switch case in addition to the while loop to send the user to the restart screen
                                     if (number_of_alive_pirates != 0) {
@@ -901,7 +927,159 @@ int main() {
 
                                 break;
                             case 4:
-                                break;
+                                // else if with an outcome that decides whether a pirate will be possibly recurited with treasure, a fight breaks out, a way to use charisma to win a poker game and treasure; each option will raise moral if it is not already at 100 (need rum to consume to do this option?)
+                                // option to consume rum or treasure; if not enough of either than get sent back
+                                clearAndRedraw(text_area, "t");
+                                int currency_decision;
+
+                                while (1) {
+                                    int treasure_cost = number_of_alive_pirates * 2;
+                                    int rum_cost = number_of_alive_pirates * 1.5;
+                                    mvwprintw(text_area, 2, 2, "To have you and your crew enter the bar, you will need to pay in either rum or treasure.");
+                                    mvwprintw(text_area, 3, 2, "1. Pay %d treasure.", treasure_cost);
+                                    mvwprintw(text_area, 4, 2, "2. Pay %d rum.", rum_cost);
+                                    mvwprintw(text_area, 5, 2, "3. Return to island options.");
+                                    wrefresh(text_area);
+                                    int ch = wgetch(text_area);
+
+                                    if (ch != ERR) {
+                                        currency_decision = ch - '0'; // Convert ASCII to integer
+                                        if (currency_decision == 1) {
+                                            clearAndRedraw(text_area, "t");
+                                            // Checks to see if you have enough treasure for the transaction
+                                            if (myShip.treasure > treasure_cost) {
+                                                myShip.treasure -= treasure_cost; // decrement existing treasure
+                                                renderShipStats(stats_area, myShip, days_passed); // update and refreshes stats immediately after change
+                                                mvwprintw(text_area, 2, 2, "You spent %d treasure. You now have %d treasure.", treasure_cost, myShip.treasure);
+                                                mvwprintw(text_area, 3, 2, "Press any key to continue...");
+                                                wrefresh(text_area);
+
+                                                waitForInput();
+                                                break; // leaves while loop
+                                            } else {
+                                                mvwprintw(text_area, 2, 2, "You don't have enough treasure. You need %d treasure, but you only have %d treasure.", treasure_cost, myShip.treasure);
+                                                mvwprintw(text_area, 3, 2, "Press any key to continue...");
+                                                wrefresh(text_area);
+
+                                                waitForInput();
+                                                clearAndRedraw(text_area, "t");
+                                            }
+                                        } else if (currency_decision == 2) {
+                                            clearAndRedraw(text_area, "t");
+                                            // Checks to see if you have enough rum for the transaction
+                                            if (myShip.rum > rum_cost) {
+                                                myShip.rum -= rum_cost; // decrement existing rum
+                                                renderShipStats(stats_area, myShip, days_passed); // update and refreshes stats immediately after change
+                                                mvwprintw(text_area, 2, 2, "You spent %d rum. You now have %d rum.", rum_cost, myShip.rum);
+                                                mvwprintw(text_area, 3, 2, "Press any key to continue...");
+                                                wrefresh(text_area);
+
+                                                waitForInput();
+                                                break; // leaves while loop
+                                            } else {
+                                                mvwprintw(text_area, 2, 2, "You don't have enough rum. You need %d rum, but you only have %d rum.", rum_cost, myShip.rum);
+                                                mvwprintw(text_area, 3, 2, "Press any key to continue...");
+                                                wrefresh(text_area);
+
+                                                waitForInput();
+                                                clearAndRedraw(text_area, "t");
+                                            }
+
+                                        } else if (currency_decision == 3) {
+                                            break;
+                                        } else {
+                                            mvwprintw(text_area, 24, 2, "Enter an interger between 1 and 3.");
+                                            wrefresh(text_area);
+                                        }
+                                    }
+                                }
+                                clearAndRedraw(text_area, "t");
+
+                                if (currency_decision == 1 || currency_decision == 2) {
+                                    float random_chance = getRandomFloat();
+                                    if (random_chance <= 0.1) {
+                                        // fight breaks out; chance to use a level up medicine, instinct, leadership
+                                    } else if (random_chance > 0.1 && random_chance <= 0.3) {
+                                        // Chance to recurit a new member
+                                        if (number_of_alive_pirates < MAX_NUMBER_OF_PIRATES) {
+                                            char buy_pirate;
+                                            int price_of_new_member = 10 + rand() % 131; // 10 to 120; the higher the price the higher the stats will be
+                                            int new_member_stat_randomizer, new_member_thievery, new_member_charisma, new_member_seamanship, 
+                                            new_member_medicine, new_member_instinct, new_member_leadership, new_member_carpentry;
+                                            
+                                            if (difficulty == EASY) {
+                                                new_member_stat_randomizer = price_of_new_member / 3;
+                                            } else if (difficulty == NORMAL) {
+                                                new_member_stat_randomizer = price_of_new_member / 4;
+                                            } else if (difficulty == HARD) {
+                                                new_member_stat_randomizer = price_of_new_member / 5;
+                                            }
+
+                                            new_member_thievery = 4 + rand() % new_member_stat_randomizer;
+                                            new_member_charisma = 4 + rand() % new_member_stat_randomizer;
+                                            new_member_seamanship = 4 + rand() % new_member_stat_randomizer;
+                                            new_member_medicine = 4 + rand() % new_member_stat_randomizer;
+                                            new_member_instinct = 4 + rand() % new_member_stat_randomizer;
+                                            new_member_leadership = 4 + rand() % new_member_stat_randomizer;
+                                            new_member_carpentry = 4 + rand() % new_member_stat_randomizer;
+
+                                            while (1) {
+                                                mvwprintw(text_area, 2, 2, "While you were in the bar, you come across someone looking to join your crew!");
+                                                mvwprintw(text_area, 3, 2, "It will cost you %d treasure.", price_of_new_member);
+                                                mvwprintw(text_area, 4, 2, "Do you wish to hire this fellow into your crew? y/n?");
+                                                mvwprintw(text_area, 2, TEXT_BORDER_X / 2, "Here are the pirates:");
+                                                mvwprintw(text_area, 3, TEXT_BORDER_X / 2, "(Recruit pirate name)");
+                                                mvwprintw(text_area, 4, TEXT_BORDER_X / 2, "Thievery: %d", new_member_thievery);
+                                                mvwprintw(text_area, 5, TEXT_BORDER_X / 2, "Charisma: %d", new_member_charisma);
+                                                mvwprintw(text_area, 6, TEXT_BORDER_X / 2, "Seamanship: %d", new_member_seamanship);
+                                                mvwprintw(text_area, 7, TEXT_BORDER_X / 2, "Medicine: %d", new_member_medicine);
+                                                mvwprintw(text_area, 8, TEXT_BORDER_X / 2, "Instinct: %d", new_member_instinct);
+                                                mvwprintw(text_area, 9, TEXT_BORDER_X / 2, "Leadership: %d", new_member_leadership);
+                                                mvwprintw(text_area, 10, TEXT_BORDER_X / 2, "Carpentry: %d", new_member_carpentry);
+                                                wrefresh(text_area);
+
+                                                buy_pirate = wgetch(text_area);
+
+                                                if (buy_pirate == 'y') {
+                                                    clearAndRedraw(text_area, "t");
+                                                    if (myShip.treasure < price_of_new_member) {
+                                                        myShip.treasure -= price_of_new_member;
+                                                        renderShipStats(stats_area, myShip, days_passed); // update and refreshes stats immediately after change
+
+                                                        // function to add the new pirate to the crew array; still need to add logic
+                                                        addPirateToCrew(attribute_area, myShip);
+
+                                                        mvwprintw(text_area, 2, 2, "You spent %d treasure. You now have %d treasure.", price_of_new_member, myShip.treasure);
+                                                        mvwprintw(text_area, 3, 2, "Press any key to continue...");
+                                                        wrefresh(text_area);
+
+                                                        waitForInput();
+
+                                                        clearAndRedraw(text_area, "t");
+                                                        break; // leaves while loop
+                                                    } else {
+                                                        // message to say they can't afford it
+                                                    }
+                                                } else if (buy_pirate == 'n') {
+                                                    break;
+                                                } else {
+                                                    mvwprintw(text_area, 24, 2, "Enter 'y' or 'n'.");
+                                                    wrefresh(text_area);
+                                                }
+                                            }
+                                        } else {
+                                            // put text here to say they missed out because their crew was too large
+                                        }
+                                    } else if (random_chance > 0.3 && random_chance <= 0.4) {
+                                        // play a game of poker and win or lose treasure; ability to use charisma and level it up perhaps?
+                                    } // add content and extend
+
+                                    // raise moral
+
+                                    clearAndRedraw(text_area, "t");
+                                    continue_from_while = 0;
+                                }
+                                break; // Breaks from switch case not while
                             case 5:
                                 break;
                             default:
@@ -915,7 +1093,7 @@ int main() {
             continue_from_while = 1;
 
             if (myShip.is_at_sea && number_of_alive_pirates != 0) {
-                float pirate_ship_encounter = getRandomFloat();
+                float pirate_ship_encounter = getRandomFloat(); // Weather may affect these ship encounters
                 if (pirate_ship_encounter <= 0.19) {
 
                 }
@@ -1022,7 +1200,7 @@ int main() {
             mvwprintw(text_area, 23, 2,"Restart? y/n:");
             wrefresh(text_area);
             
-            last_decision = getch();
+            last_decision = wgetch(text_area);
 
             if (last_decision == 'y') {
                 clearAndRedraw(text_area, "t");

@@ -17,6 +17,7 @@ void initializeIslands(Island islands[], int numIslands) {          // function 
     islands[0].max_rum = islands[0].rum_available;
     islands[0].is_island_hostile = false;
     islands[0].is_looted = false;
+    islands[0].is_stronghold = false;
 
     snprintf(islands[1].name, MAX_STRING_LENGTH, "Crimson Cove");
     snprintf(islands[1].description, MAX_STRING_LENGTH, "Known for its vibrant red coral reefs");
@@ -30,6 +31,7 @@ void initializeIslands(Island islands[], int numIslands) {          // function 
     islands[1].max_rum = islands[1].rum_available;
     islands[1].is_island_hostile = false;
     islands[1].is_looted = false;
+    islands[1].is_stronghold = false;
 
     snprintf(islands[2].name, MAX_STRING_LENGTH, "Sainte-Maria");
     snprintf(islands[2].description, MAX_STRING_LENGTH, "A place where pirates reside.");
@@ -43,6 +45,7 @@ void initializeIslands(Island islands[], int numIslands) {          // function 
     islands[2].max_rum = islands[2].rum_available;
     islands[2].is_island_hostile = false;
     islands[2].is_looted = false;
+    islands[2].is_stronghold = false;
 
     snprintf(islands[3].name, MAX_STRING_LENGTH, "Emerald Isle");
     snprintf(islands[3].description, MAX_STRING_LENGTH, "Rumored to have mystical emerald artifacts");
@@ -56,6 +59,7 @@ void initializeIslands(Island islands[], int numIslands) {          // function 
     islands[3].max_rum = islands[3].rum_available;
     islands[3].is_island_hostile = false;
     islands[3].is_looted = false;
+    islands[3].is_stronghold = false;
 
     snprintf(islands[4].name, MAX_STRING_LENGTH, "Gold Rush Atoll");
     snprintf(islands[4].description, MAX_STRING_LENGTH, "Once the sight of a legendary gold rush");
@@ -69,6 +73,7 @@ void initializeIslands(Island islands[], int numIslands) {          // function 
     islands[4].max_rum = islands[4].rum_available;
     islands[4].is_island_hostile = false;
     islands[4].is_looted = false;
+    islands[4].is_stronghold = false;
 
     snprintf(islands[5].name, MAX_STRING_LENGTH, "Whispering Sands");
     snprintf(islands[5].description, MAX_STRING_LENGTH, "Desert Island with secrets carried by the wind");
@@ -82,6 +87,7 @@ void initializeIslands(Island islands[], int numIslands) {          // function 
     islands[5].max_rum = islands[5].rum_available;
     islands[5].is_island_hostile = false;
     islands[5].is_looted = false;
+    islands[5].is_stronghold = false;
 
     snprintf(islands[6].name, MAX_STRING_LENGTH, "Admiral's Archipelago");
     snprintf(islands[6].description, MAX_STRING_LENGTH, "Enclave for Pirates of the highest status");
@@ -95,6 +101,7 @@ void initializeIslands(Island islands[], int numIslands) {          // function 
     islands[6].max_rum = islands[6].rum_available;
     islands[6].is_island_hostile = false;
     islands[6].is_looted = false;
+    islands[6].is_stronghold = false;
 
     snprintf(islands[7].name, MAX_STRING_LENGTH, "Port Royal Haven");
     snprintf(islands[7].description, MAX_STRING_LENGTH, "Shrouded in mystery under the moonlight");
@@ -108,6 +115,7 @@ void initializeIslands(Island islands[], int numIslands) {          // function 
     islands[7].max_rum = islands[7].rum_available;
     islands[7].is_island_hostile = false;
     islands[7].is_looted = false;
+    islands[7].is_stronghold = false;
 
     snprintf(islands[8].name, MAX_STRING_LENGTH, "Nassau Harbor");
     snprintf(islands[8].description, MAX_STRING_LENGTH, "Freedom port, pirate democracy, vibrant nightlife, notorious captains thrive");
@@ -121,6 +129,7 @@ void initializeIslands(Island islands[], int numIslands) {          // function 
     islands[8].max_rum = islands[8].rum_available;
     islands[8].is_island_hostile = false;
     islands[8].is_looted = false;
+    islands[8].is_stronghold = false;
 
     snprintf(islands[9].name, MAX_STRING_LENGTH, "Buccaneers Refuge");
     snprintf(islands[9].description, MAX_STRING_LENGTH, "Sanctuary for outcasts, camaraderie, shared spoils, legendary pirate lore");
@@ -134,6 +143,7 @@ void initializeIslands(Island islands[], int numIslands) {          // function 
     islands[9].max_rum = islands[9].rum_available;
     islands[9].is_island_hostile = false;
     islands[9].is_looted = false;
+    islands[9].is_stronghold = false;
 
     snprintf(islands[10].name, MAX_STRING_LENGTH, "Gold Coast Retreat");
     snprintf(islands[10].description, MAX_STRING_LENGTH, "Opulent haven, lavish lifestyles, treacherous alliances, high-stakes intrigues unfold.");
@@ -147,6 +157,7 @@ void initializeIslands(Island islands[], int numIslands) {          // function 
     islands[10].max_rum = islands[10].rum_available;
     islands[10].is_island_hostile = false;
     islands[10].is_looted = false;
+    islands[10].is_stronghold = false;
 
 
     // Add more non-hostile islands as needed...
@@ -164,6 +175,7 @@ void initializeIslands(Island islands[], int numIslands) {          // function 
     islands[11].max_rum = islands[11].rum_available;
     islands[11].is_island_hostile = true;
     islands[11].is_looted = false;
+    islands[11].is_stronghold = false;
 
     snprintf(islands[12].name, MAX_STRING_LENGTH, "Skullcap Atoll");
     snprintf(islands[12].description, MAX_STRING_LENGTH, "Dreaded prison, pirate executions, haunted waters, cursed shores beckon danger");
@@ -177,6 +189,7 @@ void initializeIslands(Island islands[], int numIslands) {          // function 
     islands[12].max_rum = islands[12].rum_available;
     islands[12].is_island_hostile = true;
     islands[12].is_looted = false;
+    islands[12].is_stronghold = false;
 
     snprintf(islands[13].name, MAX_STRING_LENGTH, "Dead Man's Reef");
     snprintf(islands[13].description, MAX_STRING_LENGTH, "A mysterious and dangerous island, Ship graveyard, treacherous currents, ghostly whispers, cursed maritime history.");
@@ -190,6 +203,7 @@ void initializeIslands(Island islands[], int numIslands) {          // function 
     islands[13].max_rum = islands[13].rum_available;
     islands[13].is_island_hostile = true;
     islands[13].is_looted = false;
+    islands[13].is_stronghold = false;
 
     snprintf(islands[14].name, MAX_STRING_LENGTH, "Noose Point");
     snprintf(islands[14].description, MAX_STRING_LENGTH, "Infamous for executions, pirate justice, a grim place of finality");
@@ -203,6 +217,7 @@ void initializeIslands(Island islands[], int numIslands) {          // function 
     islands[14].max_rum = islands[14].rum_available;
     islands[14].is_island_hostile = true;
     islands[14].is_looted = false;
+    islands[14].is_stronghold = false;
 
     snprintf(islands[15].name, MAX_STRING_LENGTH, "Red Tide Haven");
     snprintf(islands[15].description, MAX_STRING_LENGTH, "Blood-soaked shores, notorious battles, relentless pirates, danger on every wave");
@@ -216,6 +231,7 @@ void initializeIslands(Island islands[], int numIslands) {          // function 
     islands[15].max_rum = islands[15].rum_available;
     islands[15].is_island_hostile = true;
     islands[15].is_looted = false;
+    islands[15].is_stronghold = false;
 
     snprintf(islands[16].name, MAX_STRING_LENGTH, "Calico's Cursed Island");
     snprintf(islands[16].description, MAX_STRING_LENGTH, "Infested by pirate outcasts, betrayal, buried grudges, an island of strife");
@@ -229,6 +245,7 @@ void initializeIslands(Island islands[], int numIslands) {          // function 
     islands[16].max_rum = islands[16].rum_available;
     islands[16].is_island_hostile = true;
     islands[16].is_looted = false;
+    islands[16].is_stronghold = false;
 
     snprintf(islands[17].name, MAX_STRING_LENGTH, "Porto Desperation Isle");
     snprintf(islands[17].description, MAX_STRING_LENGTH, "Exile's refuge, banished pirates, desperate actions, a last resort");
@@ -242,6 +259,7 @@ void initializeIslands(Island islands[], int numIslands) {          // function 
     islands[17].max_rum = islands[17].rum_available;
     islands[17].is_island_hostile = true;
     islands[17].is_looted = false;
+    islands[17].is_stronghold = false;
 
     snprintf(islands[18].name, MAX_STRING_LENGTH, "Tunis");
     snprintf(islands[18].description, MAX_STRING_LENGTH, "Desolate marsh isle, treacherous betrayal, festering vendettas, a realm gripped by strife");
@@ -255,6 +273,7 @@ void initializeIslands(Island islands[], int numIslands) {          // function 
     islands[18].max_rum = islands[18].rum_available;
     islands[18].is_island_hostile = true;
     islands[18].is_looted = false;
+    islands[18].is_stronghold = false;
 
     snprintf(islands[19].name, MAX_STRING_LENGTH, "Barataria Bay");
     snprintf(islands[19].description, MAX_STRING_LENGTH, "Treacherous stronghold, pirate vendettas,");
@@ -268,6 +287,7 @@ void initializeIslands(Island islands[], int numIslands) {          // function 
     islands[19].max_rum = islands[19].rum_available;
     islands[19].is_island_hostile = true;
     islands[19].is_looted = false;
+    islands[19].is_stronghold = false;
 
     snprintf(islands[20].name, MAX_STRING_LENGTH, "Blackbeard's Abyss Isle");
     snprintf(islands[20].description, MAX_STRING_LENGTH, "Shrouded cove, ominous legends, a feared and shadowed retreat");
@@ -281,6 +301,7 @@ void initializeIslands(Island islands[], int numIslands) {          // function 
     islands[20].max_rum = islands[20].rum_available;
     islands[20].is_island_hostile = true;
     islands[20].is_looted = false;
+    islands[20].is_stronghold = true;
 
     snprintf(islands[21].name, MAX_STRING_LENGTH, "Corsair Bastion");
     snprintf(islands[21].description, MAX_STRING_LENGTH, "Pirate stronghold, ceaseless raids, enslaved shores, echoes of lawlessness");
@@ -294,6 +315,7 @@ void initializeIslands(Island islands[], int numIslands) {          // function 
     islands[21].max_rum = islands[21].rum_available;
     islands[21].is_island_hostile = true;
     islands[21].is_looted = false;
+    islands[21].is_stronghold = true;
 }
 
 
@@ -302,6 +324,8 @@ void initializeIslands(Island islands[], int numIslands) {          // function 
 // greater chance and range of food
 // less chance and range of booze
 // greater chance of cannonballs availabale
+
+// add new variable and strongohlds boolean
 
 
 // hostile -    i want shit u can only acquire on hostile islands, need a notes file also, save system, possibly designate certain hostile islands as strongholds which have greater chance of cannonballs

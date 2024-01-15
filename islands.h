@@ -18,6 +18,7 @@ typedef struct {
     int max_rum;
     bool is_island_hostile;
     bool is_looted;
+    bool is_stronghold;
 } Island;
 
 void initializeIslands(Island islands[], int numIslands);

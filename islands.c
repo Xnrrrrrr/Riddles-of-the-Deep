@@ -200,6 +200,8 @@ void initializeIslands(Island islands[], int numIslands) {          // function 
     islands[11].is_island_hostile = true;
     islands[11].is_looted = false;
     islands[11].is_stronghold = false;
+    islands[11].has_shipwright = false;
+    islands[11].has_black_market = false;
 
     snprintf(islands[12].name, MAX_STRING_LENGTH, "Skullcap Atoll");
     snprintf(islands[12].description, MAX_STRING_LENGTH, "Dreaded prison, pirate executions, haunted waters, cursed shores beckon danger");
@@ -216,6 +218,8 @@ void initializeIslands(Island islands[], int numIslands) {          // function 
     islands[12].is_island_hostile = true;
     islands[12].is_looted = false;
     islands[12].is_stronghold = false;
+    islands[12].has_shipwright = false;
+    islands[12].has_black_market = false;
 
     snprintf(islands[13].name, MAX_STRING_LENGTH, "Dead Man's Reef");
     snprintf(islands[13].description, MAX_STRING_LENGTH, "A mysterious and dangerous island, Ship graveyard, treacherous currents, ghostly whispers, cursed maritime history.");
@@ -232,6 +236,8 @@ void initializeIslands(Island islands[], int numIslands) {          // function 
     islands[13].is_island_hostile = true;
     islands[13].is_looted = false;
     islands[13].is_stronghold = false;
+    islands[13].has_shipwright = false;
+    islands[13].has_black_market = false;
 
     snprintf(islands[14].name, MAX_STRING_LENGTH, "Noose Point");
     snprintf(islands[14].description, MAX_STRING_LENGTH, "Infamous for executions, pirate justice, a grim place of finality");
@@ -248,6 +254,8 @@ void initializeIslands(Island islands[], int numIslands) {          // function 
     islands[14].is_island_hostile = true;
     islands[14].is_looted = false;
     islands[14].is_stronghold = false;
+    islands[14].has_shipwright = false;
+    islands[14].has_black_market = false;
 
     snprintf(islands[15].name, MAX_STRING_LENGTH, "Red Tide Haven");
     snprintf(islands[15].description, MAX_STRING_LENGTH, "Blood-soaked shores, notorious battles, relentless pirates, danger on every wave");
@@ -264,6 +272,8 @@ void initializeIslands(Island islands[], int numIslands) {          // function 
     islands[15].is_island_hostile = true;
     islands[15].is_looted = false;
     islands[15].is_stronghold = false;
+    islands[15].has_shipwright = false;
+    islands[15].has_black_market = false;
 
     snprintf(islands[16].name, MAX_STRING_LENGTH, "Calico's Cursed Island");
     snprintf(islands[16].description, MAX_STRING_LENGTH, "Infested by pirate outcasts, betrayal, buried grudges, an island of strife");
@@ -280,6 +290,9 @@ void initializeIslands(Island islands[], int numIslands) {          // function 
     islands[16].is_island_hostile = true;
     islands[16].is_looted = false;
     islands[16].is_stronghold = false;
+    islands[16].has_shipwright = false;
+    islands[16].has_black_market = false;
+
 
     snprintf(islands[17].name, MAX_STRING_LENGTH, "Porto Desperation Isle");
     snprintf(islands[17].description, MAX_STRING_LENGTH, "Exile's refuge, banished pirates, desperate actions, a last resort");
@@ -296,6 +309,8 @@ void initializeIslands(Island islands[], int numIslands) {          // function 
     islands[17].is_island_hostile = true;
     islands[17].is_looted = false;
     islands[17].is_stronghold = false;
+    islands[17].has_shipwright = false;
+    islands[17].has_black_market = false;
 
     snprintf(islands[18].name, MAX_STRING_LENGTH, "Tunis");
     snprintf(islands[18].description, MAX_STRING_LENGTH, "Desolate marsh isle, treacherous betrayal, festering vendettas, a realm gripped by strife");
@@ -312,6 +327,8 @@ void initializeIslands(Island islands[], int numIslands) {          // function 
     islands[18].is_island_hostile = true;
     islands[18].is_looted = false;
     islands[18].is_stronghold = false;
+    islands[18].has_shipwright = false;
+    islands[18].has_black_market = false;
 
     snprintf(islands[19].name, MAX_STRING_LENGTH, "Barataria Bay");
     snprintf(islands[19].description, MAX_STRING_LENGTH, "Treacherous stronghold, pirate vendettas,");
@@ -328,6 +345,8 @@ void initializeIslands(Island islands[], int numIslands) {          // function 
     islands[19].is_island_hostile = true;
     islands[19].is_looted = false;
     islands[19].is_stronghold = false;
+    islands[19].has_shipwright = false;
+    islands[19].has_black_market = false;
 
     snprintf(islands[20].name, MAX_STRING_LENGTH, "Blackbeard's Abyss Isle");
     snprintf(islands[20].description, MAX_STRING_LENGTH, "Shrouded cove, ominous legends, a feared and shadowed retreat");
@@ -344,6 +363,8 @@ void initializeIslands(Island islands[], int numIslands) {          // function 
     islands[20].is_island_hostile = true;
     islands[20].is_looted = false;
     islands[20].is_stronghold = false;
+    islands[20].has_shipwright = false;
+    islands[20].has_black_market = false;
 
     snprintf(islands[21].name, MAX_STRING_LENGTH, "Corsair Bastion");
     snprintf(islands[21].description, MAX_STRING_LENGTH, "Pirate stronghold, ceaseless raids, enslaved shores, echoes of lawlessness");
@@ -360,6 +381,8 @@ void initializeIslands(Island islands[], int numIslands) {          // function 
     islands[21].is_island_hostile = true;
     islands[21].is_looted = false;
     islands[21].is_stronghold = false;
+    islands[21].has_shipwright = false;
+    islands[21].has_black_market = false;
 
     //Strongholds
 
@@ -376,6 +399,8 @@ void initializeIslands(Island islands[], int numIslands) {          // function 
     islands[22].is_island_hostile = true;
     islands[22].is_looted = false;
     islands[22].is_stronghold = true;
+    islands[22].has_shipwright = false;
+    islands[22].has_black_market = false;
 
 }
 

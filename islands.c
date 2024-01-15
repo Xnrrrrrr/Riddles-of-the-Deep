@@ -36,6 +36,8 @@ void initializeIslands(Island islands[], int numIslands) {          // function 
     islands[1].is_island_hostile = false;
     islands[1].is_looted = false;
     islands[1].is_stronghold = false;
+    islands[1].has_shipwright = false;
+    islands[1].has_black_market = false;
 
     snprintf(islands[2].name, MAX_STRING_LENGTH, "Sainte-Maria");
     snprintf(islands[2].description, MAX_STRING_LENGTH, "A place where pirates reside.");
@@ -52,6 +54,8 @@ void initializeIslands(Island islands[], int numIslands) {          // function 
     islands[2].is_island_hostile = false;
     islands[2].is_looted = false;
     islands[2].is_stronghold = false;
+    islands[2].has_shipwright = false;
+    islands[2].has_black_market = false;
 
     snprintf(islands[3].name, MAX_STRING_LENGTH, "Emerald Isle");
     snprintf(islands[3].description, MAX_STRING_LENGTH, "Rumored to have mystical emerald artifacts");
@@ -68,6 +72,8 @@ void initializeIslands(Island islands[], int numIslands) {          // function 
     islands[3].is_island_hostile = false;
     islands[3].is_looted = false;
     islands[3].is_stronghold = false;
+    islands[3].has_shipwright = false;
+    islands[3].has_black_market = false;
 
     snprintf(islands[4].name, MAX_STRING_LENGTH, "Gold Rush Atoll");
     snprintf(islands[4].description, MAX_STRING_LENGTH, "Once the sight of a legendary gold rush");
@@ -84,6 +90,8 @@ void initializeIslands(Island islands[], int numIslands) {          // function 
     islands[4].is_island_hostile = false;
     islands[4].is_looted = false;
     islands[4].is_stronghold = false;
+    islands[4].has_shipwright = false;
+    islands[4].has_black_market = false;
 
     snprintf(islands[5].name, MAX_STRING_LENGTH, "Whispering Sands");
     snprintf(islands[5].description, MAX_STRING_LENGTH, "Desert Island with secrets carried by the wind");
@@ -100,6 +108,8 @@ void initializeIslands(Island islands[], int numIslands) {          // function 
     islands[5].is_island_hostile = false;
     islands[5].is_looted = false;
     islands[5].is_stronghold = false;
+    islands[5].has_shipwright = false;
+    islands[5].has_black_market = false;
 
     snprintf(islands[6].name, MAX_STRING_LENGTH, "Admiral's Archipelago");
     snprintf(islands[6].description, MAX_STRING_LENGTH, "Enclave for Pirates of the highest status");
@@ -116,6 +126,8 @@ void initializeIslands(Island islands[], int numIslands) {          // function 
     islands[6].is_island_hostile = false;
     islands[6].is_looted = false;
     islands[6].is_stronghold = false;
+    islands[6].has_shipwright = false;
+    islands[6].has_black_market = false;
 
     snprintf(islands[7].name, MAX_STRING_LENGTH, "Port Royal Haven");
     snprintf(islands[7].description, MAX_STRING_LENGTH, "Shrouded in mystery under the moonlight");
@@ -132,6 +144,8 @@ void initializeIslands(Island islands[], int numIslands) {          // function 
     islands[7].is_island_hostile = false;
     islands[7].is_looted = false;
     islands[7].is_stronghold = false;
+    islands[7].has_shipwright = false;
+    islands[7].has_black_market = false;
 
     snprintf(islands[8].name, MAX_STRING_LENGTH, "Nassau Harbor");
     snprintf(islands[8].description, MAX_STRING_LENGTH, "Freedom port, pirate democracy, vibrant nightlife, notorious captains thrive");
@@ -148,6 +162,8 @@ void initializeIslands(Island islands[], int numIslands) {          // function 
     islands[8].is_island_hostile = false;
     islands[8].is_looted = false;
     islands[8].is_stronghold = false;
+    islands[8].has_shipwright = false;
+    islands[8].has_black_market = false;
 
     snprintf(islands[9].name, MAX_STRING_LENGTH, "Buccaneers Refuge");
     snprintf(islands[9].description, MAX_STRING_LENGTH, "Sanctuary for outcasts, camaraderie, shared spoils, legendary pirate lore");
@@ -164,6 +180,8 @@ void initializeIslands(Island islands[], int numIslands) {          // function 
     islands[9].is_island_hostile = false;
     islands[9].is_looted = false;
     islands[9].is_stronghold = false;
+    islands[9].has_shipwright = false;
+    islands[9].has_black_market = false;
 
     snprintf(islands[10].name, MAX_STRING_LENGTH, "Gold Coast Retreat");
     snprintf(islands[10].description, MAX_STRING_LENGTH, "Opulent haven, lavish lifestyles, treacherous alliances, high-stakes intrigues unfold.");
@@ -180,6 +198,8 @@ void initializeIslands(Island islands[], int numIslands) {          // function 
     islands[10].is_island_hostile = false;
     islands[10].is_looted = false;
     islands[10].is_stronghold = false;
+    islands[10].has_shipwright = false;
+    islands[10].has_black_market = false;
 
 
     // Add more non-hostile islands as needed...

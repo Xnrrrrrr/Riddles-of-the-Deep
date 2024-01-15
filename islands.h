@@ -8,6 +8,8 @@
 typedef struct {
     char name[MAX_STRING_LENGTH];
     char description[MAX_STRING_LENGTH];
+    int dubloon_available;
+    int max_dubloon;
     int treasure_available;
     int max_treasure;
     int food_available;
@@ -19,6 +21,8 @@ typedef struct {
     bool is_island_hostile;
     bool is_looted;
     bool is_stronghold;
+    bool has_shipwright;
+    bool has_black_market;
 } Island;
 
 void initializeIslands(Island islands[], int numIslands);

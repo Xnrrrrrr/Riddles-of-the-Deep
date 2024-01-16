@@ -169,7 +169,7 @@ void initializeIslands(Island islands[], int numIslands) {          // function 
     snprintf(islands[9].description, MAX_STRING_LENGTH, "Sanctuary for outcasts, camaraderie, shared spoils, legendary pirate lore");
     islands[9].dubloon_available = 2 + rand() % 2; // 2 to 3 CHECK
     islands[9].max_dubloon = islands[9].dubloon_available;
-    islands[9].treasure_available = 2 + rand() % 2; // 2 to 3 CHECK
+    islands[9].treasure_available = 2 + rand() % 2; // 2 to 3 CHECK             i am him
     islands[9].max_treasure = islands[9].treasure_available;
     islands[9].food_available = 5 + rand() % 3; // 5 to 7 CHECK
     islands[9].max_food = islands[9].food_available;

@@ -16,6 +16,7 @@
 #define NUMBER_OF_ISLANDS 22
 #define RESTOCK_RATE 3
 #define MAX_LOOT 80
+#define NUMBER_OF_NAMES 10
 
 // exp macros
 #define EXP_THRESHOLD 185
@@ -71,6 +72,8 @@ typedef struct {
     Attributes attributes;
 } Pirate;
 
+char pirate_name[MAX_PIRATE_NAME_LENGTH];
+
 typedef struct {
     int distance;
     int treasure;
@@ -79,8 +82,10 @@ typedef struct {
     int rum;
     int health;
     bool is_at_sea;
-    Pirate crew[NUMBER_OF_PIRATES];
+    Pirate crew[MAX_NUMBER_OF_PIRATES];
 } Ship;
+
+Ship myShip;
 
 Difficulty difficulty;      // declaring
 
@@ -231,7 +236,7 @@ int findNewIslandIndex(int current_island, int num_islands) {
     return new_island_index;
 }
 
-int getTotalThievery(Ship myShip, int number_of_alive_pirates) {
+int getTotalThievery(int number_of_alive_pirates) {
     int total_crew_thievery = 0;                                    // sets total thievery so you can calculate how much resources you can get
     for (int i = 0; i < number_of_alive_pirates; i++) {             // initializes variable i of type int and sets its value to 0 , increments the value by 1 after each iteraiton
         total_crew_thievery += myShip.crew[i].attributes.thievery;  // method so when a member dies it decreases when a member dies or can increase when you get new members
@@ -239,7 +244,7 @@ int getTotalThievery(Ship myShip, int number_of_alive_pirates) {
     return total_crew_thievery;
 }
 
-int getTotalCharisma(Ship myShip, int number_of_alive_pirates) {
+int getTotalCharisma(int number_of_alive_pirates) {
     int total_crew_charisma = 0;
     for (int i = 0; i < number_of_alive_pirates; i++) {
         total_crew_charisma += myShip.crew[i].attributes.charisma;
@@ -247,7 +252,7 @@ int getTotalCharisma(Ship myShip, int number_of_alive_pirates) {
     return total_crew_charisma;
 }
 
-int getTotalSeamanship(Ship myShip, int number_of_alive_pirates) {
+int getTotalSeamanship(int number_of_alive_pirates) {
     int total_crew_seamanship = 0;
     for (int i = 0; i < number_of_alive_pirates; i++) {
         total_crew_seamanship += myShip.crew[i].attributes.seamanship;
@@ -255,7 +260,7 @@ int getTotalSeamanship(Ship myShip, int number_of_alive_pirates) {
     return total_crew_seamanship;
 }
 
-int getTotalMedicine(Ship myShip, int number_of_alive_pirates) {
+int getTotalMedicine(int number_of_alive_pirates) {
     int total_crew_medicine = 0;
     for (int i = 0; i < number_of_alive_pirates; i++) {
         total_crew_medicine += myShip.crew[i].attributes.medicine;
@@ -263,7 +268,7 @@ int getTotalMedicine(Ship myShip, int number_of_alive_pirates) {
     return total_crew_medicine;
 }
 
-int getTotalInstinct(Ship myShip, int number_of_alive_pirates) {
+int getTotalInstinct(int number_of_alive_pirates) {
     int total_crew_instinct = 0;
     for (int i = 0; i < number_of_alive_pirates; i++) {
         total_crew_instinct += myShip.crew[i].attributes.instinct;
@@ -271,7 +276,7 @@ int getTotalInstinct(Ship myShip, int number_of_alive_pirates) {
     return total_crew_instinct;
 }
 
-int getTotalLeadership(Ship myShip, int number_of_alive_pirates) {
+int getTotalLeadership(int number_of_alive_pirates) {
     int total_crew_leadership = 0;
     for (int i = 0; i < number_of_alive_pirates; i++) {
         total_crew_leadership += myShip.crew[i].attributes.leadership;
@@ -279,7 +284,7 @@ int getTotalLeadership(Ship myShip, int number_of_alive_pirates) {
     return total_crew_leadership;
 }
 
-int getTotalCarpentry(Ship myShip, int number_of_alive_pirates) {
+int getTotalCarpentry(int number_of_alive_pirates) {
     int total_crew_carpentry = 0;
     for (int i = 0; i < number_of_alive_pirates; i++) {
         total_crew_carpentry += myShip.crew[i].attributes.carpentry;
@@ -348,15 +353,15 @@ int clearAndRedraw(WINDOW *window, const char *identifier){ // "const char *" is
     return 0;
 }
 
-// Well... waits for user input
+// ncurses; waits for user input
 void waitForInput() {
     noecho();  // Turn off echoing
     getch();   // Wait for user input without displaying it
     echo();    // Turn echoing back on
 }
 
-// accepts attribute_area, myShip, and number_of_alive_pirates to calculate the position within the attribute area
-void renderPirateAttributes(WINDOW *attribute_area, Ship myShip, int number_of_alive_pirates) {
+// accepts attribute_area, and number_of_alive_pirates to calculate the position within the attribute area
+void renderPirateAttributes(WINDOW *attribute_area, int number_of_alive_pirates) {
     clearAndRedraw(attribute_area, "a");
     for (int i = 0; i < number_of_alive_pirates; i++) {
         int box_row = i / NUM_BOXES_X;   // Calculate row based on attribute layout
@@ -382,8 +387,8 @@ void renderPirateAttributes(WINDOW *attribute_area, Ship myShip, int number_of_a
     }
 }
 
-// Accepts the stats area, myShip, and days_passed as args
-void renderShipStats(WINDOW *stats_area, Ship myShip, int days_passed) {
+// Accepts the stats area, and days_passed as args
+void renderShipStats(WINDOW *stats_area, int days_passed) {
     clearAndRedraw(stats_area, "s");
     mvwprintw(stats_area, 2, 2, "Ship Health: %d", myShip.health);
     mvwprintw(stats_area, 2, 58, "Days passed: %d", days_passed);
@@ -393,13 +398,14 @@ void renderShipStats(WINDOW *stats_area, Ship myShip, int days_passed) {
     wrefresh(stats_area);
 }
 
-// Accepts attribute area, text_area, myShip, and &number_of_alive_pirates
-void checkForDeadPirates(WINDOW *attribute_area, WINDOW *text_area, Ship myShip, int *number_of_alive_pirates) {
+// Accepts attribute area, text_area, and &number_of_alive_pirates
+void checkForDeadPirates(WINDOW *attribute_area, WINDOW *text_area, int *number_of_alive_pirates) {
     clearAndRedraw(text_area, "t");
     for (int i = 0; i < *number_of_alive_pirates; i++) {
         if (myShip.crew[i].health <= 0) {
             mvwprintw(text_area, 2, 2, "Your crewmate %s died!", myShip.crew[i].name);
             wrefresh(text_area);
+
             // Shift remaining pirates to fill the gap
             for (int j = i; j < *number_of_alive_pirates - 1; j++) {
                 myShip.crew[j] = myShip.crew[j + 1];
@@ -407,7 +413,7 @@ void checkForDeadPirates(WINDOW *attribute_area, WINDOW *text_area, Ship myShip,
             (*number_of_alive_pirates)--;
 
             i--;
-            renderPirateAttributes(attribute_area, myShip, *number_of_alive_pirates);
+            renderPirateAttributes(attribute_area, *number_of_alive_pirates);
 
             waitForInput();
 
@@ -416,9 +422,47 @@ void checkForDeadPirates(WINDOW *attribute_area, WINDOW *text_area, Ship myShip,
     }
 }
 
-// Accepts attribute_area, myShip, 
-void addPirateToCrew(WINDOW *attribute_area, Ship myShip) {
+// Accepts attribute_area, text_area, thievery, charisma, seamanship, medicine, instinct, leadership, carpentry, and &number_of_alive_pirates
+void addPirateToCrew(WINDOW *attribute_area, WINDOW *text_area, int new_member_thievery, int new_member_charisma, int new_member_seamanship, 
+                    int new_member_medicine, int new_member_instinct, int new_member_leadership, int new_member_carpentry, int *number_of_alive_pirates) {
+    if (*number_of_alive_pirates < MAX_NUMBER_OF_PIRATES) {
+        while (1) {
+            clearAndRedraw(text_area, "t");
+            mvwprintw(text_area, 2, 2, "Enter the name of your new pirate (Must be %d characters or less): ", MAX_PIRATE_NAME_LENGTH);
+            wrefresh(text_area);
 
+            wgetnstr(text_area, pirate_name, MAX_PIRATE_NAME_LENGTH);
+
+            if (strlen(pirate_name) > 0 && strlen(pirate_name) <= MAX_PIRATE_NAME_LENGTH) {
+                strcpy(myShip.crew[*number_of_alive_pirates].name, pirate_name);
+                break;
+            } else {
+                mvwprintw(text_area, 24, 2, "Try again. The pirate's name should be %d characters or less.", MAX_PIRATE_NAME_LENGTH);
+                wrefresh(text_area);
+            }
+        }
+        myShip.crew[*number_of_alive_pirates].health = 100;
+        myShip.crew[*number_of_alive_pirates].morale = 100;
+        myShip.crew[*number_of_alive_pirates].attributes.thievery = new_member_thievery;
+        myShip.crew[*number_of_alive_pirates].attributes.charisma = new_member_charisma;
+        myShip.crew[*number_of_alive_pirates].attributes.seamanship = new_member_seamanship;
+        myShip.crew[*number_of_alive_pirates].attributes.medicine = new_member_medicine;
+        myShip.crew[*number_of_alive_pirates].attributes.instinct = new_member_instinct;
+        myShip.crew[*number_of_alive_pirates].attributes.leadership = new_member_leadership;
+        myShip.crew[*number_of_alive_pirates].attributes.carpentry = new_member_carpentry;
+        
+        myShip.crew[*number_of_alive_pirates].attributes.thievery_exp = calculateExp(new_member_thievery);
+        myShip.crew[*number_of_alive_pirates].attributes.charisma_exp = calculateExp(new_member_charisma);
+        myShip.crew[*number_of_alive_pirates].attributes.seamanship_exp = calculateExp(new_member_seamanship);
+        myShip.crew[*number_of_alive_pirates].attributes.medicine_exp = calculateExp(new_member_medicine);
+        myShip.crew[*number_of_alive_pirates].attributes.instinct_exp = calculateExp(new_member_instinct);
+        myShip.crew[*number_of_alive_pirates].attributes.leadership_exp = calculateExp(new_member_leadership);
+        myShip.crew[*number_of_alive_pirates].attributes.carpentry_exp = calculateExp(new_member_carpentry);
+
+        (*number_of_alive_pirates)++;
+
+        renderPirateAttributes(attribute_area, *number_of_alive_pirates);
+    }
 }
 
 int main() {
@@ -428,6 +472,7 @@ int main() {
     char last_decision;
 
     do {
+        // Probably need a function to clean this up; start
         initscr();  // Starts curses mode
 
         refresh();  // Keeps the boxes from disappearing
@@ -440,26 +485,17 @@ int main() {
         int bottom_area_y = yMax - ATTRIBUTE_BORDER_Y - PADDING_Y;
 
         WINDOW *text_area = newwin(TEXT_BORDER_Y, TEXT_BORDER_X, text_area_y, PADDING_X);
-        box(text_area, 0, 0);
-        mvwprintw(text_area, 0, 2, "Text Area");
-        wrefresh(text_area);
+        clearAndRedraw(text_area, "t");
 
         WINDOW *attribute_area = newwin(ATTRIBUTE_BORDER_Y, ATTRIBUTE_BORDER_X, bottom_area_y, right_area_x);
-        box(attribute_area, 0, 0);
-        mvwprintw(attribute_area, 0, 2, "Attribute Area");
-        drawAttributeBoxes(attribute_area);
-        wrefresh(attribute_area);
+        clearAndRedraw(attribute_area, "a");
 
         WINDOW *stats_area = newwin(STATS_BORDER_Y, STATS_BORDER_X, PADDING_Y, right_area_x);
-        box(stats_area, 0, 0);
-        mvwprintw(stats_area, 0, 2, "Stats Area");
-        wrefresh(stats_area);
+        clearAndRedraw(stats_area, "s");
 
         WINDOW *visual_area = newwin(VISUAL_BORDER_Y, VISUAL_BORDER_X, (PADDING_Y * 8), ((PADDING_X * 3) - 1));
-        box(visual_area, 0, 0);
-        mvwprintw(visual_area, 0, 2, "Visual Area");
-        wrefresh(visual_area);
-
+        clearAndRedraw(visual_area, "v");
+        // stop
 
 
         int difficulty_choice;
@@ -480,7 +516,6 @@ int main() {
 
         waitForInput();
 
-        Ship myShip;
         myShip.health = 100;
         myShip.distance = 0;
         myShip.is_at_sea = false;
@@ -514,7 +549,7 @@ int main() {
                 if (difficulty_choice == 1) {
                     difficulty = EASY;
                     myShip.cannonballs = 20;
-                    myShip.treasure = 20;
+                    myShip.treasure = 2000; // change back to 20
                     myShip.food = 48;
                     myShip.rum = 30;
                     loot_factor_forgiveness = 0.4;
@@ -544,9 +579,7 @@ int main() {
 
         clearAndRedraw(text_area, "t");     // clear and redraw for every note print
 
-        for (int i = 0; i < NUMBER_OF_PIRATES; i++) {       // giving the pirates names 4+
-            char pirate_name[MAX_PIRATE_NAME_LENGTH];
-
+        for (int i = 0; i < NUMBER_OF_PIRATES; i++) {       // giving the pirates names 4
             while (1) {
                 clearAndRedraw(text_area, "t");
                 mvwprintw(text_area, 2, 2, "Enter the name of your pirate #%d (Must be %d characters or less): ", i + 1, MAX_PIRATE_NAME_LENGTH);
@@ -566,7 +599,7 @@ int main() {
 
         clearAndRedraw(text_area, "t");
 
-        // Gives pirates there base shit 4x
+        // Gives pirates there base stats
         for (int i = 0; i < number_of_alive_pirates; i++) {
             Attributes baseAttributes = getBasePirateAttributes();
             myShip.crew[i].attributes = baseAttributes;
@@ -574,10 +607,10 @@ int main() {
             myShip.crew[i].morale = 100;
         }
 
-        renderPirateAttributes(attribute_area, myShip, number_of_alive_pirates);
+        renderPirateAttributes(attribute_area, number_of_alive_pirates);
 
         // Display stats
-        renderShipStats(stats_area, myShip, days_passed);
+        renderShipStats(stats_area, days_passed);
 
         // while (1) {
         //     mvwprintw(text_area, 2, 2, "%s's Thievery EXP: %d", myShip.crew[0].name, myShip.crew[0].attributes.thievery_exp);
@@ -592,7 +625,7 @@ int main() {
 
         //     myShip.crew[0].attributes.thievery = new_level;
 
-        //     renderPirateAttributes(attribute_area, myShip, number_of_alive_pirates);
+        //     renderPirateAttributes(attribute_area, number_of_alive_pirates);
 
         //     waitForInput();
         // }
@@ -609,31 +642,25 @@ int main() {
 
 
             // Check and remove pirates with 0 health
-            for (int i = 0; i < number_of_alive_pirates; i++) {
-                if (myShip.crew[i].health <= 0) {
-                    // Shift remaining pirates to fill the gap
-                    for (int j = i; j < number_of_alive_pirates - 1; j++) {
-                        myShip.crew[j] = myShip.crew[j + 1];
-                    }
-                    number_of_alive_pirates--;
-
-                    i--;
-                    renderPirateAttributes(attribute_area, myShip, number_of_alive_pirates);
-                }
-            }
+            checkForDeadPirates(attribute_area, text_area, &number_of_alive_pirates);
+            
 
             // Calculate pirate attributes
-            int total_crew_thievery = getTotalThievery(myShip, number_of_alive_pirates);
-            // int total_crew_charisma = getTotalCharisma(myShip, number_of_alive_pirates);
-            // int total_crew_seamanship = getTotalSeamanship(myShip, number_of_alive_pirates);
-            // int total_crew_medicine = getTotalMedicine(myShip, number_of_alive_pirates);
-            // int total_crew_instinct = getTotalInstinct(myShip, number_of_alive_pirates);
-            // int total_crew_leadership = getTotalLeadership(myShip, number_of_alive_pirates);
-            // int total_crew_carpentry = getTotalCarpentry(myShip, number_of_alive_pirates);
+            int total_crew_thievery = getTotalThievery(number_of_alive_pirates);
+            // int total_crew_charisma = getTotalCharisma(number_of_alive_pirates);
+            // int total_crew_seamanship = getTotalSeamanship(number_of_alive_pirates);
+            // int total_crew_medicine = getTotalMedicine(number_of_alive_pirates);
+            // int total_crew_instinct = getTotalInstinct(number_of_alive_pirates);
+            // int total_crew_leadership = getTotalLeadership(number_of_alive_pirates);
+            // int total_crew_carpentry = getTotalCarpentry(number_of_alive_pirates);
 
             // 2. Print Current Game State -----------------------
 
             //printf("Ship Health: %d", myShip.health);
+            mvwprintw(visual_area, 2, 2, "# of alive pirates: %d", number_of_alive_pirates);
+            wrefresh(visual_area);
+
+            renderPirateAttributes(attribute_area, number_of_alive_pirates);
 
             // for (int i = 0; i < number_of_alive_pirates; i++) {
             //     printf("%s, hp: %d", myShip.crew[i].name, myShip.crew[i].health);
@@ -724,7 +751,7 @@ int main() {
                                 mvwprintw(text_area, 3, 2, "Press any key to continue...");
                                 wrefresh(text_area);
 
-                                renderShipStats(stats_area, myShip, days_passed);
+                                renderShipStats(stats_area, days_passed);
 
                                 waitForInput();
 
@@ -764,7 +791,7 @@ int main() {
                                         }
                                     }
                                     if (i == number_of_alive_pirates - 1) {
-                                        renderPirateAttributes(attribute_area, myShip, number_of_alive_pirates);
+                                        renderPirateAttributes(attribute_area, number_of_alive_pirates);
                                         mvwprintw(text_area, i + 3, 2, "Press any key to continue...");
                                         wrefresh(text_area);
                                     }
@@ -775,7 +802,7 @@ int main() {
                                 clearAndRedraw(text_area, "t");
 
                                 // Handle death
-                                checkForDeadPirates(attribute_area, text_area, myShip, &number_of_alive_pirates);
+                                checkForDeadPirates(attribute_area, text_area, &number_of_alive_pirates);
 
                                 // Chance for a mate to go awol
                                 for (int i = 0; i < number_of_alive_pirates; i++) {
@@ -792,7 +819,7 @@ int main() {
 
                                         i--;
 
-                                        renderPirateAttributes(attribute_area, myShip, number_of_alive_pirates);
+                                        renderPirateAttributes(attribute_area, number_of_alive_pirates);
 
                                         mvwprintw(text_area, 3, 2, "Press any key to continue...");
                                         wrefresh(text_area);
@@ -889,7 +916,7 @@ int main() {
                                             }
                                         }
                                         if (i == number_of_alive_pirates - 1) {
-                                            renderPirateAttributes(attribute_area, myShip, number_of_alive_pirates);
+                                            renderPirateAttributes(attribute_area, number_of_alive_pirates);
                                             mvwprintw(text_area, i + 3, 2, "Press any key to continue...");
                                         }   
                                     }
@@ -899,7 +926,7 @@ int main() {
                                     
                                     clearAndRedraw(text_area, "t");
 
-                                    checkForDeadPirates(attribute_area, text_area, myShip, &number_of_alive_pirates);
+                                    checkForDeadPirates(attribute_area, text_area, &number_of_alive_pirates);
 
                                     // leaves switch case in addition to the while loop to send the user to the restart screen
                                     if (number_of_alive_pirates != 0) {
@@ -949,7 +976,7 @@ int main() {
                                             // Checks to see if you have enough treasure for the transaction
                                             if (myShip.treasure > treasure_cost) {
                                                 myShip.treasure -= treasure_cost; // decrement existing treasure
-                                                renderShipStats(stats_area, myShip, days_passed); // update and refreshes stats immediately after change
+                                                renderShipStats(stats_area, days_passed); // update and refreshes stats immediately after change
                                                 mvwprintw(text_area, 2, 2, "You spent %d treasure. You now have %d treasure.", treasure_cost, myShip.treasure);
                                                 mvwprintw(text_area, 3, 2, "Press any key to continue...");
                                                 wrefresh(text_area);
@@ -969,7 +996,7 @@ int main() {
                                             // Checks to see if you have enough rum for the transaction
                                             if (myShip.rum > rum_cost) {
                                                 myShip.rum -= rum_cost; // decrement existing rum
-                                                renderShipStats(stats_area, myShip, days_passed); // update and refreshes stats immediately after change
+                                                renderShipStats(stats_area, days_passed); // update and refreshes stats immediately after change
                                                 mvwprintw(text_area, 2, 2, "You spent %d rum. You now have %d rum.", rum_cost, myShip.rum);
                                                 mvwprintw(text_area, 3, 2, "Press any key to continue...");
                                                 wrefresh(text_area);
@@ -999,7 +1026,7 @@ int main() {
                                     float random_chance = getRandomFloat();
                                     if (random_chance <= 0.1) {
                                         // fight breaks out; chance to use a level up medicine, instinct, leadership
-                                    } else if (random_chance > 0.1 && random_chance <= 0.3) {
+                                    } else if (random_chance > 0.1 && random_chance <= 0.3) { // 0.1 to 0.3; changed to give 100%
                                         // Chance to recurit a new member
                                         if (number_of_alive_pirates < MAX_NUMBER_OF_PIRATES) {
                                             char buy_pirate;
@@ -1025,29 +1052,31 @@ int main() {
 
                                             while (1) {
                                                 mvwprintw(text_area, 2, 2, "While you were in the bar, you come across someone looking to join your crew!");
-                                                mvwprintw(text_area, 3, 2, "It will cost you %d treasure.", price_of_new_member);
-                                                mvwprintw(text_area, 4, 2, "Do you wish to hire this fellow into your crew? y/n?");
-                                                mvwprintw(text_area, 2, TEXT_BORDER_X / 2, "Here are the pirates:");
-                                                mvwprintw(text_area, 3, TEXT_BORDER_X / 2, "(Recruit pirate name)");
-                                                mvwprintw(text_area, 4, TEXT_BORDER_X / 2, "Thievery: %d", new_member_thievery);
-                                                mvwprintw(text_area, 5, TEXT_BORDER_X / 2, "Charisma: %d", new_member_charisma);
-                                                mvwprintw(text_area, 6, TEXT_BORDER_X / 2, "Seamanship: %d", new_member_seamanship);
-                                                mvwprintw(text_area, 7, TEXT_BORDER_X / 2, "Medicine: %d", new_member_medicine);
-                                                mvwprintw(text_area, 8, TEXT_BORDER_X / 2, "Instinct: %d", new_member_instinct);
-                                                mvwprintw(text_area, 9, TEXT_BORDER_X / 2, "Leadership: %d", new_member_leadership);
-                                                mvwprintw(text_area, 10, TEXT_BORDER_X / 2, "Carpentry: %d", new_member_carpentry);
+                                                mvwprintw(text_area, 3, 2, "It will cost you %d treasure. You currently have %d treasure.", price_of_new_member, myShip.treasure);
+                                                mvwprintw(text_area, 5, 2, "Here are the pirate stats:");
+                                                mvwprintw(text_area, 7, 2, "Thievery: %d", new_member_thievery);
+                                                mvwprintw(text_area, 8, 2, "Charisma: %d", new_member_charisma);
+                                                mvwprintw(text_area, 9, 2, "Seamanship: %d", new_member_seamanship);
+                                                mvwprintw(text_area, 10, 2, "Medicine: %d", new_member_medicine);
+                                                mvwprintw(text_area, 11, 2, "Instinct: %d", new_member_instinct);
+                                                mvwprintw(text_area, 12, 2, "Leadership: %d", new_member_leadership);
+                                                mvwprintw(text_area, 13, 2, "Carpentry: %d", new_member_carpentry);
+                                                mvwprintw(text_area, 15, 2, "Do you wish to hire this fellow into your crew? y/n?");
                                                 wrefresh(text_area);
 
                                                 buy_pirate = wgetch(text_area);
 
                                                 if (buy_pirate == 'y') {
                                                     clearAndRedraw(text_area, "t");
-                                                    if (myShip.treasure < price_of_new_member) {
+                                                    if (myShip.treasure >= price_of_new_member) {
                                                         myShip.treasure -= price_of_new_member;
-                                                        renderShipStats(stats_area, myShip, days_passed); // update and refreshes stats immediately after change
+                                                        renderShipStats(stats_area, days_passed); // update and refreshes stats immediately after change
 
                                                         // function to add the new pirate to the crew array; still need to add logic
-                                                        addPirateToCrew(attribute_area, myShip);
+                                                        addPirateToCrew(attribute_area, text_area, new_member_thievery, new_member_charisma, new_member_seamanship, new_member_medicine,
+                                                        new_member_instinct, new_member_leadership, new_member_carpentry, &number_of_alive_pirates);
+
+                                                        clearAndRedraw(text_area, "t");
 
                                                         mvwprintw(text_area, 2, 2, "You spent %d treasure. You now have %d treasure.", price_of_new_member, myShip.treasure);
                                                         mvwprintw(text_area, 3, 2, "Press any key to continue...");
@@ -1056,12 +1085,17 @@ int main() {
                                                         waitForInput();
 
                                                         clearAndRedraw(text_area, "t");
-                                                        break; // leaves while loop
                                                     } else {
                                                         // message to say they can't afford it
+                                                        mvwprintw(text_area, 2, 2, "You don't have enough treasure to hire this pirate.");
+
+                                                        waitForInput();
+
+                                                        clearAndRedraw(text_area, "t");
                                                     }
+                                                    break; // leaves while loop
                                                 } else if (buy_pirate == 'n') {
-                                                    break;
+                                                    break; // leaves while loop
                                                 } else {
                                                     mvwprintw(text_area, 24, 2, "Enter 'y' or 'n'.");
                                                     wrefresh(text_area);
@@ -1097,6 +1131,8 @@ int main() {
                 if (pirate_ship_encounter <= 0.19) {
 
                 }
+                // options repair hull
+                // 
             }
 
             if (!myShip.is_at_sea && islands[current_island_index].is_island_hostile && number_of_alive_pirates != 0) {
@@ -1172,7 +1208,7 @@ int main() {
             }
 
             days_passed += 1;
-            renderShipStats(stats_area, myShip, days_passed);
+            renderShipStats(stats_area, days_passed);
 
             //usleep(100000);  // Sleep for 0.1 seconds (100,000 microseconds)
         }
@@ -1204,7 +1240,7 @@ int main() {
 
             if (last_decision == 'y') {
                 clearAndRedraw(text_area, "t");
-                renderPirateAttributes(attribute_area, myShip, number_of_alive_pirates);
+                renderPirateAttributes(attribute_area, number_of_alive_pirates);
                 clearAndRedraw(stats_area, "s");
                 clearAndRedraw(visual_area, "v");
                 break;

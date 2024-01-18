@@ -157,7 +157,7 @@ void initializeIslands(Island islands[], int numIslands) {          // function 
     islands[8].max_food = islands[8].food_available;
     islands[8].cannonballs_available = 3 + rand() % 8; // 3 to 10
     islands[8].max_cannonballs = islands[8].cannonballs_available;
-    islands[8].rum_available = 4 + rand() % 7; // 4 to 10
+    islands[8].rum_available = 4 + rand() % 7; // 4 to 100
     islands[8].max_rum = islands[8].rum_available;
     islands[8].is_island_hostile = false;
     islands[8].is_looted = false;

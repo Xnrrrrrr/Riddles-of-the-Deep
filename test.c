@@ -13,7 +13,7 @@
 #define MAX_STRING_LENGTH 100
 #define NUMBER_OF_PIRATES 4
 #define MAX_NUMBER_OF_PIRATES 9
-#define NUMBER_OF_ISLANDS 22
+#define NUMBER_OF_ISLANDS 23
 #define RESTOCK_RATE 3
 #define MAX_LOOT 80
 #define NUMBER_OF_NAMES 10
@@ -77,6 +77,7 @@ char pirate_name[MAX_PIRATE_NAME_LENGTH];
 typedef struct {
     int distance;
     int treasure;
+    int dubloon;
     int food;
     int cannonballs;
     int rum;
@@ -392,7 +393,8 @@ void renderShipStats(WINDOW *stats_area, int days_passed) {
     clearAndRedraw(stats_area, "s");
     mvwprintw(stats_area, 2, 2, "Ship Health: %d", myShip.health);
     mvwprintw(stats_area, 2, 58, "Days passed: %d", days_passed);
-    mvwprintw(stats_area, 3, 2, "Treasure: %d", myShip.treasure);
+    mvwprintw(stats_area, 3, 58, "Treasure: %d", myShip.treasure);
+    mvwprintw(stats_area, 3, 2, "Dubloons: %d", myShip.dubloon);
     mvwprintw(stats_area, 4, 2, "Food: %d", myShip.food);
     mvwprintw(stats_area, 5, 2, "Rum: %d", myShip.rum);
     wrefresh(stats_area);
@@ -549,7 +551,7 @@ int main() {
                 if (difficulty_choice == 1) {
                     difficulty = EASY;
                     myShip.cannonballs = 20;
-                    myShip.treasure = 2000; // change back to 20
+                    myShip.dubloon = 20; // change back to 20
                     myShip.food = 48;
                     myShip.rum = 30;
                     loot_factor_forgiveness = 0.4;
@@ -557,7 +559,7 @@ int main() {
                 } else if (difficulty_choice == 2) {
                     difficulty = NORMAL;
                     myShip.cannonballs = 10;
-                    myShip.treasure = 10;
+                    myShip.dubloon = 10;
                     myShip.food = 24;
                     myShip.rum = 20;
                     loot_factor_forgiveness = 0.2;
@@ -565,7 +567,7 @@ int main() {
                 } else if (difficulty_choice == 3) {
                     difficulty = HARD;
                     myShip.cannonballs = 4;
-                    myShip.treasure = 0;
+                    myShip.dubloon = 0;
                     myShip.food = 12;
                     myShip.rum = 10;
                     loot_factor_forgiveness = 0.1;
@@ -673,7 +675,7 @@ int main() {
                     mvwprintw(text_area, 3, 2, "1. Explore the seas for treasure."); // If food reaches 0, there will be a percent chance that each crew member will die
                     mvwprintw(text_area, 4, 2, "2. Rest for the day."); // Low chance for a crew member to go awol?
                     mvwprintw(text_area, 5, 2, "3. Scour the island for riches."); // Chance to lose or find new mates; 
-                    mvwprintw(text_area, 6, 2, "4. Hit the pub with your mates."); // Raises moral but has a chance for one of your mates to get in a fight and injured. Maybe a chance to recruit a new mate for the price of some treasure. Consumes food, rum, and treasure?
+                    mvwprintw(text_area, 6, 2, "4. Hit the pub with your mates."); // Raises moral but has a chance for one of your mates to get in a fight and injured. Maybe a chance to recruit a new mate for the price of some dubloons. Consumes food, rum, and treasure?
                     mvwprintw(text_area, 7, 2, "5. Trade with the locals."); // chance to buy a treasure map
                     wrefresh(text_area);
 
@@ -834,8 +836,8 @@ int main() {
                                 break;
                             case 3:
                                 if (!islands[current_island_index].is_looted) {
-                                    float treasure_loot_factor = getRandomFloat();  // Random factor between 0 and 1
-                                    float treasure_max_loot = MAX_LOOT * (treasure_loot_factor + loot_factor_forgiveness);
+                                    float dubloon_loot_factor = getRandomFloat();  // Random factor between 0 and 1
+                                    float dubloon_max_loot = MAX_LOOT * (dubloon_loot_factor + loot_factor_forgiveness);
 
                                     float food_loot_factor = getRandomFloat();  // Random factor between 0 and 1
                                     float food_max_loot = MAX_LOOT * food_loot_factor;
@@ -847,15 +849,15 @@ int main() {
                                     float rum_max_loot = MAX_LOOT * rum_loot_factor;
 
                                     // calculateLoot accepts total crew thievery as in interger, loot factor (float between 0 & 1), max loot (float), and available res at island (int). everything on island based on CII
-                                    int treasure_loot_amount = calculateLoot(total_crew_thievery, treasure_loot_factor, treasure_max_loot, islands[current_island_index].treasure_available);
+                                    int dubloon_loot_amount = calculateLoot(total_crew_thievery, dubloon_loot_factor, dubloon_max_loot, islands[current_island_index].dubloon_available);
                                     int food_loot_amount = calculateLoot(total_crew_thievery, food_loot_factor, food_max_loot, islands[current_island_index].food_available);
                                     int cannonball_loot_amount = calculateLoot(total_crew_thievery, cannonball_loot_factor, cannonball_max_loot, islands[current_island_index].cannonballs_available);
                                     int rum_loot_amount = calculateLoot(total_crew_thievery, rum_loot_factor, rum_max_loot, islands[current_island_index].rum_available);
 
                                     // Apply the loot to the island
-                                    islands[current_island_index].treasure_available -= treasure_loot_amount;       // decrementing (-=), simulates loot being taken from island, if prevents negative
-                                    if (islands[current_island_index].treasure_available < 0) {
-                                        islands[current_island_index].treasure_available = 0;
+                                    islands[current_island_index].dubloon_available -= dubloon_loot_amount;       // decrementing (-=), simulates loot being taken from island, if prevents negative
+                                    if (islands[current_island_index].dubloon_available < 0) {
+                                        islands[current_island_index].dubloon_available = 0;
                                     }
 
                                     islands[current_island_index].food_available -= food_loot_amount;
@@ -874,7 +876,7 @@ int main() {
                                     }
 
                                     // Give loot to ship
-                                    myShip.treasure += treasure_loot_amount;
+                                    myShip.dubloon += dubloon_loot_amount;
                                     myShip.food += food_loot_amount;
                                     myShip.cannonballs += cannonball_loot_amount;
                                     myShip.rum += rum_loot_amount;
@@ -897,7 +899,7 @@ int main() {
                                         } else {
                                             int check_for_level_up = myShip.crew[i].attributes.thievery;
 
-                                            int exp_gain = treasure_loot_amount + rand() % 30;  // May need to adjust this
+                                            int exp_gain = dubloon_loot_amount + rand() % 30;  // May need to adjust this
 
                                             myShip.crew[i].attributes.thievery_exp += exp_gain;
 
@@ -930,7 +932,7 @@ int main() {
 
                                     // leaves switch case in addition to the while loop to send the user to the restart screen
                                     if (number_of_alive_pirates != 0) {
-                                        mvwprintw(text_area, 2, 2, "%d treasure gained. You now have %d treasure", treasure_loot_amount, myShip.treasure);
+                                        mvwprintw(text_area, 2, 2, "%d dubloons gained. You now have %d dubloon(s)", dubloon_loot_amount, myShip.dubloon);
                                         mvwprintw(text_area, 3, 2, "You gained %d food, %d cannonball(s), and %d rum. You now have %d food, %d cannonball(s), and %d rum.", food_loot_amount, cannonball_loot_amount, rum_loot_amount, myShip.food, myShip.cannonballs, myShip.rum);
                                         mvwprintw(text_area, 4, 2, "Press any key to continue...");
                                         wrefresh(text_area);
@@ -954,16 +956,16 @@ int main() {
 
                                 break;
                             case 4:
-                                // else if with an outcome that decides whether a pirate will be possibly recurited with treasure, a fight breaks out, a way to use charisma to win a poker game and treasure; each option will raise moral if it is not already at 100 (need rum to consume to do this option?)
-                                // option to consume rum or treasure; if not enough of either than get sent back
+                                // else if with an outcome that decides whether a pirate will be possibly recurited with dubloon, a fight breaks out, a way to use charisma to win a poker game and treasure; each option will raise moral if it is not already at 100 (need rum to consume to do this option?)
+                                // option to consume rum or dubloon; if not enough of either than get sent back
                                 clearAndRedraw(text_area, "t");
                                 int currency_decision;
 
                                 while (1) {
-                                    int treasure_cost = number_of_alive_pirates * 2;
+                                    int dubloon_cost = number_of_alive_pirates * 2;
                                     int rum_cost = number_of_alive_pirates * 1.5;
-                                    mvwprintw(text_area, 2, 2, "To have you and your crew enter the bar, you will need to pay in either rum or treasure.");
-                                    mvwprintw(text_area, 3, 2, "1. Pay %d treasure.", treasure_cost);
+                                    mvwprintw(text_area, 2, 2, "To have you and your crew enter the bar, you will need to pay in either rum or dubloons.");
+                                    mvwprintw(text_area, 3, 2, "1. Pay %d dubloons.", dubloon_cost);
                                     mvwprintw(text_area, 4, 2, "2. Pay %d rum.", rum_cost);
                                     mvwprintw(text_area, 5, 2, "3. Return to island options.");
                                     wrefresh(text_area);
@@ -973,18 +975,18 @@ int main() {
                                         currency_decision = ch - '0'; // Convert ASCII to integer
                                         if (currency_decision == 1) {
                                             clearAndRedraw(text_area, "t");
-                                            // Checks to see if you have enough treasure for the transaction
-                                            if (myShip.treasure > treasure_cost) {
-                                                myShip.treasure -= treasure_cost; // decrement existing treasure
+                                            // Checks to see if you have enough dubloon for the transaction
+                                            if (myShip.dubloon > dubloon_cost) {
+                                                myShip.dubloon -= dubloon_cost; // decrement existing dubloon
                                                 renderShipStats(stats_area, days_passed); // update and refreshes stats immediately after change
-                                                mvwprintw(text_area, 2, 2, "You spent %d treasure. You now have %d treasure.", treasure_cost, myShip.treasure);
+                                                mvwprintw(text_area, 2, 2, "You spent %d dubloons. You now have %d dubloon(s).", dubloon_cost, myShip.dubloon);
                                                 mvwprintw(text_area, 3, 2, "Press any key to continue...");
                                                 wrefresh(text_area);
 
                                                 waitForInput();
                                                 break; // leaves while loop
                                             } else {
-                                                mvwprintw(text_area, 2, 2, "You don't have enough treasure. You need %d treasure, but you only have %d treasure.", treasure_cost, myShip.treasure);
+                                                mvwprintw(text_area, 2, 2, "You don't have enough dubloons. You need %d dubloons, but you only have %d dubloon(s).", dubloon_cost, myShip.dubloon);
                                                 mvwprintw(text_area, 3, 2, "Press any key to continue...");
                                                 wrefresh(text_area);
 
@@ -1052,7 +1054,7 @@ int main() {
 
                                             while (1) {
                                                 mvwprintw(text_area, 2, 2, "While you were in the bar, you come across someone looking to join your crew!");
-                                                mvwprintw(text_area, 3, 2, "It will cost you %d treasure. You currently have %d treasure.", price_of_new_member, myShip.treasure);
+                                                mvwprintw(text_area, 3, 2, "It will cost you %d dubloon. You currently have %d dubloon(s).", price_of_new_member, myShip.dubloon);
                                                 mvwprintw(text_area, 5, 2, "Here are the pirate stats:");
                                                 mvwprintw(text_area, 7, 2, "Thievery: %d", new_member_thievery);
                                                 mvwprintw(text_area, 8, 2, "Charisma: %d", new_member_charisma);
@@ -1068,8 +1070,8 @@ int main() {
 
                                                 if (buy_pirate == 'y') {
                                                     clearAndRedraw(text_area, "t");
-                                                    if (myShip.treasure >= price_of_new_member) {
-                                                        myShip.treasure -= price_of_new_member;
+                                                    if (myShip.dubloon >= price_of_new_member) {
+                                                        myShip.dubloon -= price_of_new_member;
                                                         renderShipStats(stats_area, days_passed); // update and refreshes stats immediately after change
 
                                                         // function to add the new pirate to the crew array; still need to add logic
@@ -1078,7 +1080,7 @@ int main() {
 
                                                         clearAndRedraw(text_area, "t");
 
-                                                        mvwprintw(text_area, 2, 2, "You spent %d treasure. You now have %d treasure.", price_of_new_member, myShip.treasure);
+                                                        mvwprintw(text_area, 2, 2, "You spent %d dubloon. You now have %d dubloon(s).", price_of_new_member, myShip.dubloon);
                                                         mvwprintw(text_area, 3, 2, "Press any key to continue...");
                                                         wrefresh(text_area);
 
@@ -1087,7 +1089,7 @@ int main() {
                                                         clearAndRedraw(text_area, "t");
                                                     } else {
                                                         // message to say they can't afford it
-                                                        mvwprintw(text_area, 2, 2, "You don't have enough treasure to hire this pirate.");
+                                                        mvwprintw(text_area, 2, 2, "You don't have enough dubloons to hire this pirate.");
 
                                                         waitForInput();
 
@@ -1105,7 +1107,7 @@ int main() {
                                             // put text here to say they missed out because their crew was too large
                                         }
                                     } else if (random_chance > 0.3 && random_chance <= 0.4) {
-                                        // play a game of poker and win or lose treasure; ability to use charisma and level it up perhaps?
+                                        // play a game of poker and win or lose dubloon; ability to use charisma and level it up perhaps?
                                     } // add content and extend
 
                                     // raise moral
@@ -1128,11 +1130,16 @@ int main() {
 
             if (myShip.is_at_sea && number_of_alive_pirates != 0) {
                 float pirate_ship_encounter = getRandomFloat(); // Weather may affect these ship encounters
-                if (pirate_ship_encounter <= 0.19) {
-
+                // load opposition ship stats and pirates
+                while (1) {
+                    if (pirate_ship_encounter <= 0.15) {
+                        mvwprintw(text_area, 2, 2, "You've encountered an enemy vessel! Make a decision.");
+                        mvwprintw(text_area, 3, 2, "Ram them!");
+                        wrefresh(text_area);
+                    } else {
+                        // options repair hull + more
+                    }
                 }
-                // options repair hull
-                // 
             }
 
             if (!myShip.is_at_sea && islands[current_island_index].is_island_hostile && number_of_alive_pirates != 0) {
@@ -1178,12 +1185,16 @@ int main() {
                 // Check if the island is looted and restock if it is
                 if (islands[i].is_looted) {
                     // Increment resources based on your restocking logic
+                    islands[i].dubloon_available += RESTOCK_RATE;
                     islands[i].treasure_available += RESTOCK_RATE;
                     islands[i].food_available += RESTOCK_RATE;
                     islands[i].cannonballs_available += RESTOCK_RATE;
                     islands[i].rum_available += RESTOCK_RATE;
                     
                     // Ensure resources don't exceed the unique maximum values
+                    if (islands[i].dubloon_available > islands[i].max_dubloon) {
+                        islands[i].dubloon_available = islands[i].max_dubloon;
+                    }
                     if (islands[i].treasure_available > islands[i].max_treasure) {
                         islands[i].treasure_available = islands[i].max_treasure;
                     }
@@ -1198,7 +1209,8 @@ int main() {
                     }
 
                     // Mark the island as not looted if it reaches the unique maximum in each resource
-                    if (islands[i].treasure_available == islands[i].max_treasure &&
+                    if (islands[i].dubloon_available == islands[i].max_dubloon &&
+                        islands[i].treasure_available == islands[i].max_treasure &&
                         islands[i].food_available == islands[i].max_food &&
                         islands[i].cannonballs_available == islands[i].max_cannonballs &&
                         islands[i].rum_available == islands[i].max_rum) {
